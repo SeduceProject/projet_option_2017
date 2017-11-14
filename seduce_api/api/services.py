@@ -15,3 +15,17 @@ def get_historique_capteur(id):
 def create_capteur(data):
 	nom = data.get('nom')
 	type = data.get('type')
+
+def retirer_position(salle, bus, index):
+	return None
+
+def ajouter_position(data):
+	return None
+
+def update_capteur(id, data):
+	return None
+
+def filter_position(salle, bus, index):
+	return None
+
+

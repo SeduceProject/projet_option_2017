@@ -26,3 +26,9 @@ submit_capteur = api.model('Informations pour creer un capteur', {
 	'nom': fields.String(required=False, description='Nom du capteur'),
 	'type': fields.String(required=True, description='Type du capteur')
 })
+
+submit_position = api.model('Informations pour creer une position', {
+	'salle': fields.String(required=True, description='Numero de salle'),
+	'bus': fields.Integer(required=True, description='Numero de bus'),
+	'index': fields.Integer(required=True, description='Index sur le bus')
+})
