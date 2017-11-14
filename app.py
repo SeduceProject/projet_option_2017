@@ -1,6 +1,6 @@
 import logging.config
 
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, g
 from seduce_api import settings
 from seduce_api.api.endpoints.capteurs import ns as capteurs_namespace
 from seduce_api.api.restplus import api
@@ -17,6 +17,14 @@ def configure_app(flask_app):
 	flask_app.config['RESTPLUS_VALIDATE'] = settings.RESTPLUS_VALIDATE
 	flask_app.config['RESTPLUS_MASK_SWAGGER'] = settings.RESTPLUS_MASK_SWAGGER
 	flask_app.config['ERROR_404_HELP'] = settings.RESTPLUS_ERROR_404_HELP
+	flask_app.config['DATABASE'] = os.path.join(app.root_path, 'database', settings.DATABASE)
+
+@app.cli.command('initdb')	
+def connect_db():
+	if not hasattr(g, 'sqlite_db'):
+		g.sqlite_db = sqlite3.connect(flask_app.config['DATABASE'])
+		g.sqlite_db.execute('pragma_foreign_keys=ON')
+	return g.sqlite_db
 
 def initialize_app(flask_app):
 	configure_app(flask_app)
@@ -25,6 +33,8 @@ def initialize_app(flask_app):
 	api.init_app(blueprint)
 	api.add_namespace(capteurs_namespace)
 	flask_app.register_blueprint(blueprint)
+
+	db.init_app(flask_app)
 
 def main():
 	initialize_app(app)
