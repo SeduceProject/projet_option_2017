@@ -3,6 +3,7 @@ import logging.config
 from flask import Flask, Blueprint
 from seduce_api import settings
 from seduce_api.api.endpoints.capteurs import ns as capteurs_namespace
+from seduce_api.api.endpoints.positions import ns as positions_namespace
 from seduce_api.api.restplus import api
 
 app = Flask(__name__)
@@ -24,6 +25,7 @@ def initialize_app(flask_app):
 	blueprint = Blueprint('Seduce', __name__, url_prefix='/'+base_url)
 	api.init_app(blueprint)
 	api.add_namespace(capteurs_namespace)
+	api.add_namespace(positions_namespace)
 	flask_app.register_blueprint(blueprint)
 
 def main():
