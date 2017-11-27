@@ -8,52 +8,52 @@ from seduce_api.api.services import retirer_position, ajouter_position, update_c
 
 log = logging.getLogger(__name__)
 
-ns = api.namespace('position', description='Operations liees aux positions')
+ns = api.namespace('position', description='Position operations')
 
 
-@ns.route('/<string:salle>/<int:bus>/<int:index>')
+@ns.route('/<string:room>/<int:bus>/<int:index>')
 class OperationsCapteur(Resource):
 
-	@api.response(201, 'Capteur cree avec succes.')
+	@api.response(201, 'Sensor Successfully created.')
 	@api.expect(submit_position)
-	def post(self, id, salle, bus, index):
+	def post(self, id, room, bus, index):
 		"""
-		Ajouter un capteur à une position donnée ou le retirer si l'identifiant fourni est nul.
+		Add a sensor to a given position or remove it if the id is null.
 		"""
 		data = request.json
 		if id == 0:
-			retirer_position(salle, bus, index)
+			remove_position(room, bus, index)
 		else:
-			ajouter_position(data)
+			add_position(data)
 		return data, 201
 
 	@api.expect(submit_position)
 	def put(self, id):
 		"""
-		Changer / Remplacer un capteur.
+		Change / Replace a sensor.
 		"""
 		data = request.json
 		update_capteur(id, data)
 		return data, 201
 
-	@api.marshal_with(capteur)
-	def get(self, salle, bus, index):
+	@api.marshal_with(sensor)
+	def get(self, room, bus, index):
 		"""
-		Renvoie les informations sur un capteur avec une position donnée.
+		Retrieve the sensor information with a given position.
 		"""
-		return filter_position(salle, bus, index), 200
+		return filter_position(room, bus, index), 200
 
 
-@ns.route('/<string:salle>/<int:bus>/<int:index>/historique')
-class HistoriquePositionParId(Resource):
+@ns.route('/<string:room>/<int:bus>/<int:index>/history')
+class HistoryPositionById(Resource):
 
-	@api.marshal_with(historique)
-	def get(self, salle, bus, index):
+	@api.marshal_with(history)
+	def get(self, room, bus, index):
 		"""
-		Historique d’une position.
+		History of a position.
 		"""
-		position = filter_position(salle, bus, index)
-		return position.historique(), 200
+		position = filter_position(room, bus, index)
+		return position.history(), 200
 
 
 

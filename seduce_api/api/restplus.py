@@ -7,11 +7,11 @@ from seduce_api import settings
 log = logging.getLogger(__name__)
 
 api = Api(version='1.0', title='Seduce API',
-		description='Projet Seduce - Surveillance de capteurs thermiques')
+		description='Seduce Project - Thermal sensors monitoring')
 
 @api.errorhandler
 def default_error_handler(e):
-	message = 'Une erreur non prise en charge a eu lieu.'
+	message = 'Unhandled exception caught.'
 	log.exception(message)
 
 	if not settings.FLASK_DEBUG:

@@ -8,62 +8,62 @@ from seduce_api.api.services import get_capteur, get_capteur_par_nom, get_positi
 
 log = logging.getLogger(__name__)
 
-ns = api.namespace('capteurs', description='Operations liees aux capteurs')
+ns = api.namespace('capteurs', description='Sensors operations')
 
 
-@ns.route('/parNom/<string:nom>')
-class CapteurParNom(Resource):
+@ns.route('/byName/<string:nom>')
+class SensorByName(Resource):
 
-	@api.marshal_with(capteur)
+	@api.marshal_with(sensor)
 	def get(self, nom):
 		"""
-		Renvoie le capteur correspondant au nom fourni.
+		Retrieve the sensor with the given name.
 		"""
-		return get_capteur_par_nom(nom)
+		return get_capteur_by_name(name)
 
 
 @ns.route('/<int:id>')
-class IdentiteCapteur(Resource):
+class SensorIdentity(Resource):
 
-	@api.marshal_with(capteur)
+	@api.marshal_with(sensor)
 	def get(self, id):
 		"""
-		Renvoie le capteur correspondant a l'identifiant fourni.
+		Retrieve the sensor with the given id.
 		"""
-		return get_capteur(id)
+		return get_sensor(id)
 
 
 @ns.route('/<int:id>/position')
-class PositionCapteurParId(Resource):
+class PositionSensorById(Resource):
 
 	@api.marshal_with(position)
 	def get(self, id):
 		"""
-		Renvoie la position du capteur correspondant a l'identifiant fourni.
+		Retrieve the position of a sensor with the given id.
 		"""
-		return get_position_capteur(id)
+		return get_position_sensor(id)
 
 
-@ns.route('/<int:id>/historique')
-class HistoriqueCapteurParId(Resource):
+@ns.route('/<int:id>/history')
+class HistorySensorById(Resource):
 
-	@api.marshal_with(historique)
+	@api.marshal_with(history)
 	def get(self, id):
 		"""
-		Renvoie l'historique des positions du capteur correspondant a l'identifiant fourni.
+		Retrieve the position history of a sensor with the given id.
 		"""
-		return get_historique_capteur(id)
+		return get_history_sensor(id)
 
 
 @ns.route('/')
-class CreationCapteur(Resource):
+class CreationSensor(Resource):
 
-	@api.response(201, 'Capteur cree avec succes.')
-	@api.expect(submit_capteur)
+	@api.response(201, 'Sensor successfully created.')
+	@api.expect(submit_sensor)
 	def post(self):
 		"""
-		Cree un capteur.
+		Sensor creation.
 		"""
 		data = request.json
-		create_capteur(data)
+		create_sensor(data)
 		return None, 201

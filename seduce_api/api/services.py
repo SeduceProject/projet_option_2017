@@ -3,29 +3,29 @@
 def get_capteur(id):
 	return None
 
-def get_capteur_par_nom(nom):
+def get_capteur_by_name(name):
 	return None
 
-def get_position_capteur(id):
+def get_position_sensor(id):
 	return None
 
-def get_historique_capteur(id):
+def get_history_sensor(id):
 	return None
 
-def create_capteur(data):
-	nom = data.get('nom')
+def create_sensor(data):
+	name = data.get('name')
 	type = data.get('type')
 
-def retirer_position(salle, bus, index):
+def remove_position(room, bus, index):
 	return None
 
-def ajouter_position(data):
+def add_position(data):
 	return None
 
-def update_capteur(id, data):
+def update_sensor(id, data):
 	return None
 
-def filter_position(salle, bus, index):
+def filter_position(room, bus, index):
 	return None
 
 
