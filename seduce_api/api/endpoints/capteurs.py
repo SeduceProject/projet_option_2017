@@ -8,7 +8,7 @@ from seduce_api.api.services import get_sensor, get_sensor_by_name, get_sensor_p
 
 log = logging.getLogger(__name__)
 
-ns = api.namespace('capteurs', description='Sensors operations')
+ns = api.namespace('sensors', description='Sensors operations')
 
 
 @ns.route('/byName/<string:nom>')

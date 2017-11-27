@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
  
 from models import Base, Sensor, Position, Assignment, History
  
-engine = create_engine('sqlite:///database.db')
+engine = create_engine('sqlite:///db.sqlite')
 # Bind the engine to the metadata of the Base class so that the
 # declaratives can be accessed through a DBSession instance
 Base.metadata.bind = engine
