@@ -2,9 +2,9 @@ import logging
 
 from flask import request
 from flask_restplus import Resource
-from seduce_api.api.restplus import api
-from seduce_api.api.serializers import sensor, position, history, submit_sensor, submit_position
-from seduce_api.api.services import remove_position, add_position, update_sensor, filter_position
+from seduce_api.restplus import api
+from seduce_api.serializers import sensor, position, history, submit_sensor, submit_position
+from seduce_api.services import remove_position, add_position, update_sensor, filter_position
 
 log = logging.getLogger(__name__)
 

@@ -2,7 +2,7 @@ import logging
 import traceback
 
 from flask_restplus import Api
-from seduce_api import settings
+import settings
 
 log = logging.getLogger(__name__)
 

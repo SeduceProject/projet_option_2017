@@ -1,10 +1,10 @@
 import logging.config
 
 from flask import Flask, Blueprint
-from seduce_api import settings
-from seduce_api.api.endpoints.capteurs import ns as sensors_namespace
-from seduce_api.api.endpoints.positions import ns as positions_namespace
-from seduce_api.api.restplus import api
+import settings
+from seduce_api.endpoints.sensors import ns as sensors_namespace
+from seduce_api.endpoints.positions import ns as positions_namespace
+from seduce_api.restplus import api
 from database import db
 
 app = Flask(__name__)

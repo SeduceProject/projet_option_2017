@@ -1,5 +1,5 @@
 from flask_restplus import fields
-from seduce_api.api.restplus import api
+from seduce_api.restplus import api
 
 sensor = api.model("Sensors information", {
 	'name': fields.String(required=False, description='Sensor name'),
