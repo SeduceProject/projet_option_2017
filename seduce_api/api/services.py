@@ -34,12 +34,22 @@ def update_sensor(id, data):
 	db.session.commit()
 
 def remove_position(room, bus, index):
-	return None
+	idn = data.get('id')
+	room = data.get('room')
+	bus = data.get('bus')
+	undex = data.get('index') 
+	pos = Position(idn, room, bus, index)
+	db.session.delete(pos)
+	db.session.commit()
 
 def add_position(data):
-	return None
+	idn = data.get('id')
+	room = data.get('room')
+	bus = data.get('bus')
+	undex = data.get('index')
+	pos = Position(idn, room, bus, index)
+	db.session.add(pos)
+	db.session.commit()
 
 def filter_position(room, bus, index):
-	return None
-
-
+	return Position.query.filter(Sensor.room == room and Sensor.bus == bus and Sensor.index == index).one()
