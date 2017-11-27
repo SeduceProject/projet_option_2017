@@ -6,7 +6,7 @@ sensor = api.model("Sensors information", {
 	'mac': fields.String(required=True, description='Sensor mac'),
 	'type': fields.String(required=False, description='Sensor type'),
 	'model': fields.String(required=False, description='Sensor model'),
-	'state': fields.String(required=True, description='Sensor state')
+	'state': fields.Integer(required=True, description='Sensor state')
 })
 
 position = api.model("Full description of a position", {
@@ -30,7 +30,7 @@ submit_sensor = api.model('Information for a sensor creation', {
 	'mac': fields.String(required=True, description='Sensor mac'),
 	'type': fields.String(required=False, description='Sensor type'),
 	'model': fields.String(required=False, description='Sensor model'),
-	'state': fields.String(required=True, description='Sensor state')
+	'state': fields.Integer(required=True, description='Sensor state')
 })
 
 submit_position = api.model('Information for a position creation', {

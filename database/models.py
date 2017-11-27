@@ -1,5 +1,3 @@
-import os
-import sys
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -50,7 +48,8 @@ class History(Base):
  
 # Create an engine that stores data in the local directory's
 # sqlalchemy_example.db file.
-engine = create_engine('sqlite:///database.db')
+#engine = create_engine('sqlite:///database.db')
+engine = create_engine('sqlite:///db.sqlite')
  
 # Create all tables in the engine. This is equivalent to "Create Table"
 # statements in raw SQL.

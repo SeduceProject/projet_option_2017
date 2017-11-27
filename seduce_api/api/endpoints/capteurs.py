@@ -19,7 +19,7 @@ class SensorByName(Resource):
 		"""
 		Retrieve the sensor with the given name.
 		"""
-		return get_capteur_by_name(name)
+		return get_sensor_by_name(name)
 
 
 @ns.route('/<int:id>')
@@ -51,7 +51,7 @@ class PositionSensorById(Resource):
 		"""
 		Retrieve the position of a sensor with the given id.
 		"""
-		return get_position_sensor(id)
+		return get_sensor_position(id)
 
 
 @ns.route('/<int:id>/history')
@@ -62,7 +62,7 @@ class HistorySensorById(Resource):
 		"""
 		Retrieve the position history of a sensor with the given id.
 		"""
-		return get_history_sensor(id)
+		return get_sensor_history(id)
 
 
 @ns.route('/')
