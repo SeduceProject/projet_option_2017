@@ -2,19 +2,22 @@ from flask_restplus import fields
 from seduce_api.api.restplus import api
 
 capteur = api.model("Sensors information", {
-	'nom': fields.String(required=False, description='Sensor name'),
-	'type': fields.String(required=True, description='Sensor type')
+	'name': fields.String(required=False, description='Sensor name'),
+	'mac': fields.String(required=True, description='Sensor mac'),
+	'type': fields.String(required=False, description='Sensor type'),
+	'model': fields.String(required=False, description='Sensor model'),
+	'state': fields.String(required=True, description='Sensor state')
 })
 
 position = api.model("Full description of a position", {
-	'salle': fields.String(required=True, description='Room number'),
+	'room': fields.String(required=True, description='Room number'),
 	'bus': fields.Integer(required=True, description='Bus number'),
 	'index': fields.Integer(required=True, description='Bus index')
 })
 
 element_historique = api.model("Dated position of a sensor", {
-	'debut': fields.DateTime(required=True, description="Start date of a given position by a sensor"),
-	'fin': fields.DateTime(required=False, description="End date of a given position by a sensor"),
+	'start_of_service': fields.DateTime(required=True, description="Start date of a given position by a sensor"),
+	'end_of_service': fields.DateTime(required=False, description="End date of a given position by a sensor"),
 	'position': fields.Nested(position)
 })
 
@@ -22,13 +25,16 @@ historique = api.inherit("History of a sensor positions", {
     'positions': fields.List(fields.Nested(element_historique))
 })
 
-submit_capteur = api.model('Information for a sensor creation', {
-	'nom': fields.String(required=False, description='Sensor name'),
-	'type': fields.String(required=True, description='Sensor type')
+submit_sensor = api.model('Information for a sensor creation', {
+	'name': fields.String(required=False, description='Sensor name'),
+	'mac': fields.String(required=True, description='Sensor mac'),
+	'type': fields.String(required=False, description='Sensor type'),
+	'model': fields.String(required=False, description='Sensor model'),
+	'state': fields.String(required=True, description='Sensor state')
 })
 
 submit_position = api.model('Information for a position creation', {
-	'salle': fields.String(required=True, description='Room number'),
+	'room': fields.String(required=True, description='Room number'),
 	'bus': fields.Integer(required=True, description='Bus number'),
 	'index': fields.Integer(required=True, description='Bus index')
 })

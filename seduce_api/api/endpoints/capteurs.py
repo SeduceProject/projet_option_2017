@@ -15,7 +15,7 @@ ns = api.namespace('capteurs', description='Sensors operations')
 class SensorByName(Resource):
 
 	@api.marshal_with(sensor)
-	def get(self, nom):
+	def get(self, name):
 		"""
 		Retrieve the sensor with the given name.
 		"""
@@ -32,12 +32,22 @@ class SensorIdentity(Resource):
 		"""
 		return get_sensor(id)
 
+	@api.response(200, 'Sensor successfully updated.')
+	@api.expect(submit_sensor)
+	def put(self, id):
+		"""
+		Sensor creation.
+		"""
+		data = request.json
+		update_sensor(id, data)
+		return None, 200
+
 
 @ns.route('/<int:id>/position')
 class PositionSensorById(Resource):
 
 	@api.marshal_with(position)
-	def get(self, id):
+	def get_position_sensor(self, id):
 		"""
 		Retrieve the position of a sensor with the given id.
 		"""
@@ -56,11 +66,11 @@ class HistorySensorById(Resource):
 
 
 @ns.route('/')
-class CreationSensor(Resource):
+class CreateSensor(Resource):
 
 	@api.response(201, 'Sensor successfully created.')
 	@api.expect(submit_sensor)
-	def post(self):
+	def put(self):
 		"""
 		Sensor creation.
 		"""
