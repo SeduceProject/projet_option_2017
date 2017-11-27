@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
  
-from models import Sensor, Position, Assignment, History
+from models import Base, Sensor, Position, Assignment, History
  
 engine = create_engine('sqlite:///database.db')
 # Bind the engine to the metadata of the Base class so that the
@@ -19,16 +19,16 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
  
 # Insert 5 Sensor in the sensors table
-sensor1 = Sensor(name='Test1', mac='00:00:00:00:01', type='thermometre', model='modele qui fonctionne bien avec un seche cheveux', etat=2)
+sensor1 = Sensor(name='Test1', mac='00:00:00:00:01', type='thermometre', model='modele qui fonctionne bien avec un seche cheveux', state=2)
 session.add(sensor1)
-sensor2 = Sensor(name='Test2', mac='00:00:00:00:02', type='thermometre', model='modele qui fonctionne juste bien', etat=1)
+sensor2 = Sensor(name='Test2', mac='00:00:00:00:02', type='thermometre', model='modele qui fonctionne juste bien', state=1)
 session.add(sensor2)
-sensor3 = Sensor(name='Test3', mac='00:00:00:00:03', type='thermometre', etat=3)
+sensor3 = Sensor(name='Test3', mac='00:00:00:00:03', type='thermometre', model=None, state=3)
 session.add(sensor3)
-sensor4 = Sensor(name='Test4', mac='00:00:00:00:04', type='voltmetre', model='modele qui mesure le courant je suppose', etat=1)
+sensor4 = Sensor(name='Test4', mac='00:00:00:00:04', type='voltmetre', model='modele qui mesure le courant je suppose', state=1)
 session.add(sensor4)
-sensor5 = Sensor(mac='00:00:00:00:05', type='voltmetre', etat=2)
-session.add(sensor4)
+sensor5 = Sensor(name=None, mac='00:00:00:00:05', type='voltmetre', model=None, state=2)
+session.add(sensor5)
 session.commit()
  
 # Insert 4 Position in the positions table 
@@ -42,3 +42,18 @@ pos4 = Position(room='B135', bus=2, index=6)
 session.add(pos4)
 session.commit()
 
+# Insert 2 Assignment in the assignments table 
+assign1 = Assignment(id_position=pos3, id_sensor=sensor2)
+session.add(assign1)
+assign2 = Assignment(id_position=pos1, id_sensor=sensor4)
+session.add(assign2)
+session.commit()
+
+# Insert 3 History in the history table 
+hist1 = History(id_position=pos1, id_sensor=sensor4, start_of_service='2017-11-01 12:00:22.000000', end_of_service=None)
+session.add(hist1)
+hist2 = Assignment(id_position=pos2, id_sensor=sensor2, start_of_service='2017-11-01 12:00:22.000000', end_of_service='2017-11-13 16:43:54.000000')
+session.add(hist2)
+hist3 = History(id_position=pos3, id_sensor=sensor2, start_of_service='2017-11-13 16:43:54.000000', end_of_service=None)
+session.add(hist3)
+session.commit()

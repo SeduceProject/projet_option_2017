@@ -18,7 +18,7 @@ class Sensor(Base):
     model = Column(String(250))
     state = Column(Integer, nullable=False)
     # init method which will be useful later
-    def __init__(name, mac, type, model, state):
+    def __init__(self, name, mac, type, model, state):
         self.name = name
         self.mac = mac
         self.type = type
@@ -35,7 +35,7 @@ class Position(Base):
     bus = Column(String(250), nullable=False)
     index = Column(String(250), nullable=False)
     # init method which will be useful later
-    def __init__(room, bus, index):
+    def __init__(self, room, bus, index):
         self.room = room
         self.bus = bus
         self.index = index
@@ -49,7 +49,7 @@ class Assignment(Base):
     id_position = Column(String(250), ForeignKey('positions.id', ondelete="CASCADE"), nullable=False, unique=True)
     id_sensor = Column(String(250), ForeignKey('sensors.id', ondelete="CASCADE"), nullable=False, unique=True)
     # init method which will be useful later
-    def __init__(id_sensor, id_position):
+    def __init__(self, id_sensor, id_position):
         self.id_sensor = id_sensor
         self.id_position = id_position
         
@@ -64,7 +64,7 @@ class History(Base):
     start_of_service = Column(TIMESTAMP, nullable=False)
     end_of_service = Column(TIMESTAMP, nullable=True)
     # init method which will be useful later
-    def __init__(id_sensor, id_position, start_of_service, end_of_service):
+    def __init__(self, id_sensor, id_position, start_of_service, end_of_service):
         self.id_sensor = id_sensor
         self.id_position = id_position
         self.start_of_service = start_of_service
