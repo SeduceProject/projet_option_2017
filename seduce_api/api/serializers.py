@@ -1,7 +1,7 @@
 from flask_restplus import fields
 from seduce_api.api.restplus import api
 
-capteur = api.model("Sensors information", {
+sensor = api.model("Sensors information", {
 	'name': fields.String(required=False, description='Sensor name'),
 	'mac': fields.String(required=True, description='Sensor mac'),
 	'type': fields.String(required=False, description='Sensor type'),
@@ -15,14 +15,14 @@ position = api.model("Full description of a position", {
 	'index': fields.Integer(required=True, description='Bus index')
 })
 
-element_historique = api.model("Dated position of a sensor", {
+history_element = api.model("Dated position of a sensor", {
 	'start_of_service': fields.DateTime(required=True, description="Start date of a given position by a sensor"),
 	'end_of_service': fields.DateTime(required=False, description="End date of a given position by a sensor"),
 	'position': fields.Nested(position)
 })
 
-historique = api.inherit("History of a sensor positions", {
-    'positions': fields.List(fields.Nested(element_historique))
+history = api.inherit("History of a sensor positions", {
+    'positions': fields.List(fields.Nested(history_element))
 })
 
 submit_sensor = api.model('Information for a sensor creation', {

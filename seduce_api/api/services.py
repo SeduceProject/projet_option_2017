@@ -20,8 +20,8 @@ def create_sensor(data):
 	model = data.get('model')
 	state = data.get('state')
 	sensor = Sensor(name, mac, type, model, state)
-    db.session.add(sensor)
-    db.session.commit()
+	db.session.add(sensor)
+	db.session.commit()
 
 def update_sensor(id, data):
 	sensor = Sensor.query.filter(Sensor.id == id).one()
@@ -31,7 +31,7 @@ def update_sensor(id, data):
 	sensor.model = data.get('model')
 	sensor.state = data.get('state')
 	db.session.add(sensor)
-    db.session.commit()
+	db.session.commit()
 
 def remove_position(room, bus, index):
 	return None
