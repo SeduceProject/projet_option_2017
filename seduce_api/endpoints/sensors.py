@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 ns = api.namespace('sensors', description='Sensors operations')
 
 
-@ns.route('/byName/<string:nom>')
+@ns.route('/byName/<string:name>')
 class SensorByName(Resource):
 
 	@api.marshal_with(sensor)

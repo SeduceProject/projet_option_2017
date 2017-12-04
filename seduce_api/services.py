@@ -2,16 +2,17 @@ from database import db
 from database.models import Sensor, Position, Assignment, History
 
 def get_sensor(id):
-	return Sensor.query.filter(Sensor.id == id).one()
+	return Sensor.query.get(id)
 
 def get_sensor_by_name(name):
-	return Sensor.query.filter(Sensor.name == name).one()
+	print Sensor.query.filter_by(name = name).one()
+	return Sensor.query.filter_by(name = name).one()
 
 def get_sensor_position(id):
-	return Position.query.join(Assignment.id_position).filter(Assignment.id_sensor == id).one()
+	return Position.query.get(id)
 
 def get_sensor_history(id):
-	return History.query.filter(History.id_sensor == id).one()
+	return History.query.get(id)
 
 def create_sensor(data):
 	name = data.get('name')
@@ -24,12 +25,12 @@ def create_sensor(data):
 	db.session.commit()
 
 def delete_sensor(id):
-	sensor = Sensor.query.filter(Sensor.id == id).one()
+	sensor = get_sensor(id)
 	db.session.delete(sensor)
 	db.session.commit()
 
 def update_sensor(id, data):
-	sensor = Sensor.query.filter(Sensor.id == id).one()
+	sensor = get_sensor(id)
 	sensor.name = data.get('name')
 	sensor.mac = data.get('mac')
 	sensor.type = data.get('type')
