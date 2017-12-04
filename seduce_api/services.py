@@ -23,6 +23,7 @@ def create_sensor(data):
 	sensor = Sensor(name, mac, type, model, state)
 	db.session.add(sensor)
 	db.session.commit()
+	return sensor
 
 def delete_sensor(id):
 	sensor = get_sensor(id)
