@@ -23,6 +23,11 @@ def create_sensor(data):
 	db.session.add(sensor)
 	db.session.commit()
 
+def delete_sensor(id):
+	sensor = Sensor.query.filter(Sensor.id == id).one()
+	db.session.delete(sensor)
+	db.session.commit()
+
 def update_sensor(id, data):
 	sensor = Sensor.query.filter(Sensor.id == id).one()
 	sensor.name = data.get('name')
@@ -37,7 +42,7 @@ def remove_position(room, bus, index):
 	idn = data.get('id')
 	room = data.get('room')
 	bus = data.get('bus')
-	undex = data.get('index') 
+	index = data.get('index') 
 	pos = Position(idn, room, bus, index)
 	db.session.delete(pos)
 	db.session.commit()
@@ -46,7 +51,7 @@ def add_position(data):
 	idn = data.get('id')
 	room = data.get('room')
 	bus = data.get('bus')
-	undex = data.get('index')
+	index = data.get('index')
 	pos = Position(idn, room, bus, index)
 	db.session.add(pos)
 	db.session.commit()

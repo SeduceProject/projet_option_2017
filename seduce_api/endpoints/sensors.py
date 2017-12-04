@@ -32,11 +32,19 @@ class SensorIdentity(Resource):
 		"""
 		return get_sensor(id)
 
+	@api.marshal_with(sensor)
+	def delete(self, id):
+		"""
+		Deletes the sensor with the given id.
+		"""
+		delete_sensor(id)
+		return None, 200
+
 	@api.response(200, 'Sensor successfully updated.')
 	@api.expect(submit_sensor)
 	def put(self, id):
 		"""
-		Sensor creation.
+		Sensor update.
 		"""
 		data = request.json
 		update_sensor(id, data)

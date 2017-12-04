@@ -54,6 +54,3 @@ class HistoryPositionById(Resource):
 		"""
 		position = filter_position(room, bus, index)
 		return position.history(), 200
-
-
-
