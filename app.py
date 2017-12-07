@@ -23,18 +23,21 @@ def configure_app(flask_app):
 	flask_app.config['ERROR_404_HELP'] = settings.RESTPLUS_ERROR_404_HELP
 
 def initialize_app(flask_app):
-	configure_app(flask_app)
-
 	blueprint = Blueprint('Seduce', __name__, url_prefix='/'+base_url)
 	api.init_app(blueprint)
 	api.add_namespace(sensors_namespace)
 	api.add_namespace(positions_namespace)
 	flask_app.register_blueprint(blueprint)
 
+def init_db(flask_app):
 	db.init_app(flask_app)
+	db.create_all()
 
 def main():
-	initialize_app(app)
+	with app.app_context():
+		configure_app(app)
+		initialize_app(app)
+		init_db(app)
 	log.info('>>>>> Starting development server at http://{}/'+base_url+'/ <<<<<'.format(app.config['SERVER_NAME']))
 	app.run(debug=settings.FLASK_DEBUG)
 
