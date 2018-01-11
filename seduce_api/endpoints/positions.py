@@ -3,43 +3,54 @@ import logging
 from flask import request
 from flask_restplus import Resource
 from seduce_api.restplus import api
-from seduce_api.serializers import sensor, position, history, submit_sensor, submit_position
-from seduce_api.services import remove_position, add_position, update_sensor, filter_position
+from seduce_api.serializers import sensor, position, history, submit_sensor, submit_sensor_position, submit_bus
+from seduce_api.services import add_bus, remove_bus, filter_position
 
 log = logging.getLogger(__name__)
 
 ns = api.namespace('position', description='Position operations')
 
 
+@ns.route('/<string:room>')
+class RoomManagement(Resource):
+
+	@api.expect(submit_bus)
+	def post(self, room):
+		"""
+		Adds a bus to the room with the given id and size.
+		"""
+		data = request.json
+		add_bus(room, data)
+		return 201
+
+
+@ns.route('/<string:room>/<int:bus>')
+class BusDeletion(Resource):
+
+	def delete(self, room, bus):
+		"""
+		Deletes a bus from the room with the given id.
+		"""
+		remove_bus(room, bus)
+		return 200
+
+
 @ns.route('/<string:room>/<int:bus>/<int:index>')
-class OperationsCapteur(Resource):
+class Assignment(Resource):
 
-	@api.response(201, 'Sensor Successfully created.')
-	@api.expect(submit_position)
-	def post(self, id, room, bus, index):
+	@api.expect(submit_sensor_position)
+	def put(self, room, bus, index):
 		"""
-		Add a sensor to a given position or remove it if the id is null.
+		Adds a sensor to a given position or remove it if the id is null.
 		"""
 		data = request.json
-		if id == 0:
-			remove_position(room, bus, index)
-		else:
-			add_position(data)
-		return data, 201
-
-	@api.expect(submit_position)
-	def put(self, id):
-		"""
-		Change / Replace a sensor.
-		"""
-		data = request.json
-		update_capteur(id, data)
-		return data, 201
+		# TODO set sensor to position
+		return 200
 
 	@api.marshal_with(sensor)
 	def get(self, room, bus, index):
 		"""
-		Retrieve the sensor information with a given position.
+		Retrieves the sensor information for a given position.
 		"""
 		return filter_position(room, bus, index), 200
 
@@ -53,4 +64,4 @@ class HistoryPositionById(Resource):
 		History of a position.
 		"""
 		position = filter_position(room, bus, index)
-		return position.history(), 200
+		return 200 #TODO position.history() ?

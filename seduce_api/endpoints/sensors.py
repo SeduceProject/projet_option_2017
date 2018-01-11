@@ -4,7 +4,7 @@ from flask import request
 from flask_restplus import Resource
 from seduce_api.restplus import api
 from seduce_api.serializers import sensor, position, history, submit_sensor
-from seduce_api.services import get_sensor, get_sensor_by_name, get_sensor_position, get_sensor_history, create_sensor
+from seduce_api.services import get_sensor, get_sensor_by_name, get_sensor_position, get_sensor_history, create_sensor, update_sensor, delete_sensor
 
 log = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class SensorByName(Resource):
 	@api.marshal_with(sensor)
 	def get(self, name):
 		"""
-		Retrieve the sensor with the given name.
+		Retrieves the sensor with the given name.
 		"""
 		return get_sensor_by_name(name)
 
@@ -28,7 +28,7 @@ class SensorIdentity(Resource):
 	@api.marshal_with(sensor)
 	def get(self, id):
 		"""
-		Retrieve the sensor with the given id.
+		Retrieves the sensor with the given id.
 		"""
 		return get_sensor(id)
 
@@ -44,7 +44,7 @@ class SensorIdentity(Resource):
 	@api.expect(submit_sensor)
 	def put(self, id):
 		"""
-		Sensor update.
+		Updates the sensor.
 		"""
 		data = request.json
 		update_sensor(id, data)
@@ -57,7 +57,7 @@ class PositionSensorById(Resource):
 	@api.marshal_with(position)
 	def get_position_sensor(self, id):
 		"""
-		Retrieve the position of a sensor with the given id.
+		Retrieves the position of a sensor with the given id.
 		"""
 		return get_sensor_position(id)
 
@@ -68,7 +68,7 @@ class HistorySensorById(Resource):
 	@api.marshal_with(history)
 	def get(self, id):
 		"""
-		Retrieve the position history of a sensor with the given id.
+		Retrieves the position history of a sensor with the given id.
 		"""
 		return get_sensor_history(id)
 
@@ -80,7 +80,7 @@ class CreateSensor(Resource):
 	@api.expect(submit_sensor)
 	def put(self):
 		"""
-		Sensor creation.
+		Creates the sensor.
 		"""
 		data = request.json
 		create_sensor(data)

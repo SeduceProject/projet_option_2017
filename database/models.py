@@ -1,5 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, TIMESTAMP
-from sqlalchemy.ext.declarative import declarative_base
+#from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
  
@@ -27,8 +27,8 @@ class Position(db.Model):
     __tablename__ = "positions"
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     room = Column(String(250), nullable=False)
-    bus = Column(String(250), nullable=False)
-    index = Column(String(250), nullable=False)
+    bus = Column(Integer, nullable=False)
+    index = Column(Integer, nullable=False)
     
     def __init__(self, room, bus, index):
         self.room = room
@@ -39,8 +39,8 @@ class Position(db.Model):
 class Assignment(db.Model):
     __tablename__ = "assignments"
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    id_position = Column(String(250), ForeignKey('positions.id', ondelete="CASCADE"), nullable=False, unique=True)
-    id_sensor = Column(String(250), ForeignKey('sensors.id', ondelete="CASCADE"), nullable=False, unique=True)
+    id_position = Column(Integer, ForeignKey('positions.id', ondelete="CASCADE"), nullable=False, unique=True)
+    id_sensor = Column(Integer, ForeignKey('sensors.id', ondelete="CASCADE"), nullable=False, unique=True)
     
     def __init__(self, id_sensor, id_position):
         self.id_sensor = id_sensor
@@ -50,8 +50,8 @@ class Assignment(db.Model):
 class History(db.Model):
     __tablename__ = "history"
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    id_position = Column(String(250), ForeignKey('positions.id', ondelete="SET NULL"), nullable=False)
-    id_sensor = Column(String(250), ForeignKey('sensors.id', ondelete="SET NULL"), nullable=False)
+    id_position = Column(Integer, ForeignKey('positions.id', ondelete="SET NULL"), nullable=False)
+    id_sensor = Column(Integer, ForeignKey('sensors.id', ondelete="SET NULL"), nullable=False)
     start_of_service = Column(TIMESTAMP, nullable=False)
     end_of_service = Column(TIMESTAMP, nullable=True)
     

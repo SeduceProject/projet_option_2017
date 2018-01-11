@@ -33,8 +33,11 @@ submit_sensor = api.model('Information for a sensor creation', {
 	'state': fields.Integer(required=True, description='Sensor state')
 })
 
-submit_position = api.model('Information for a position creation', {
-	'room': fields.String(required=True, description='Room number'),
-	'bus': fields.Integer(required=True, description='Bus number'),
-	'index': fields.Integer(required=True, description='Bus index')
+submit_sensor_position = api.model('Information to move a sensor to a position', {
+	'sensor': fields.Integer(required=True, description='Sensor id')
+})
+
+submit_bus = api.model('Information to create a bus', {
+	'index': fields.Integer(required=True, description='Bus id'),
+	'size': fields.Integer(required=True, description='Bus size')
 })
