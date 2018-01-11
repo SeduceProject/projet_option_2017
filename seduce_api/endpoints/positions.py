@@ -23,6 +23,7 @@ class RoomManagement(Resource):
 		add_bus(room, data)
 		return 201
 
+	# TODO delete whole room
 
 @ns.route('/<string:room>/<int:bus>')
 class BusDeletion(Resource):
@@ -36,7 +37,7 @@ class BusDeletion(Resource):
 
 
 @ns.route('/<string:room>/<int:bus>/<int:index>')
-class Assignment(Resource):
+class AssignSensorToPosition(Resource):
 
 	@api.expect(submit_sensor_position)
 	def put(self, room, bus, index):
@@ -55,13 +56,13 @@ class Assignment(Resource):
 		return filter_position(room, bus, index), 200
 
 
-@ns.route('/<string:room>/<int:bus>/<int:index>/history')
-class HistoryPositionById(Resource):
-
-	@api.marshal_with(history)
-	def get(self, room, bus, index):
-		"""
-		History of a position.
-		"""
-		position = filter_position(room, bus, index)
-		return 200 #TODO position.history() ?
+#@ns.route('/<string:room>/<int:bus>/<int:index>/history')
+#class HistoryPositionById(Resource):
+#
+#	@api.marshal_with(history)
+#	def get(self, room, bus, index):
+#		"""
+#		History of a position.
+#		"""
+#		position = filter_position(room, bus, index)
+#		return 200 #TODO position.history() ?

@@ -62,15 +62,15 @@ class PositionSensorById(Resource):
 		return get_sensor_position(id)
 
 
-@ns.route('/<int:id>/history')
-class HistorySensorById(Resource):
-
-	@api.marshal_with(history)
-	def get(self, id):
-		"""
-		Retrieves the position history of a sensor with the given id.
-		"""
-		return get_sensor_history(id)
+#@ns.route('/<int:id>/history')
+#class HistorySensorById(Resource):
+#
+#	@api.marshal_with(history)
+#	def get(self, id):
+#		"""
+#		Retrieves the position history of a sensor with the given id.
+#		"""
+#		return get_sensor_history(id)
 
 
 @ns.route('/')
