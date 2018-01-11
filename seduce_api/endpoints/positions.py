@@ -47,7 +47,7 @@ class AssignSensorToPosition(Resource):
 	@api.expect(submit_sensor_position)
 	def put(self, room, bus, index):
 		"""
-		Adds a sensor assignment to the given position.
+		Sets a sensor assignment to the given position.
 		"""
 		return add_assignment(room, bus, index, request.json), 200
 

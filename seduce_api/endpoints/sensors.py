@@ -45,7 +45,7 @@ class SensorIdentity(Resource):
 		"""
 		Updates the sensor.
 		"""
-		return update_sensor(id, request.json), 204
+		return update_sensor(id, request.json), 200
 
 
 @ns.route('/<int:id>/position')
@@ -75,8 +75,8 @@ class CreateSensor(Resource):
 
 	@api.marshal_with(sensor)
 	@api.expect(submit_sensor)
-	def put(self):
+	def post(self):
 		"""
-		Creates the sensor.
+		Creates a sensor.
 		"""
 		return create_sensor(request.json), 201
