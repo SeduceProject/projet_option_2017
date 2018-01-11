@@ -39,14 +39,14 @@ class SensorIdentity(Resource):
 		delete_sensor(id)
 		return None, 204
 
+	@api.marshal_with(sensor)
 	@api.expect(submit_sensor)
 	def put(self, id):
 		"""
 		Updates the sensor.
 		"""
 		data = request.json
-		update_sensor(id, data)
-		return None, 204
+		return update_sensor(id, data), 204
 
 
 @ns.route('/<int:id>/position')
@@ -74,6 +74,7 @@ class PositionSensorById(Resource):
 @ns.route('/')
 class CreateSensor(Resource):
 
+	@api.marshal_with(sensor)
 	@api.expect(submit_sensor)
 	def put(self):
 		"""

@@ -20,7 +20,8 @@ class RoomManagement(Resource):
 		Adds a bus to the room with the given id and size.
 		"""
 		data = request.json
-		return add_bus(room, data), 201
+		add_bus(room, data)
+		return None, 201
 
 	def delete(self, room):
 		"""
@@ -43,6 +44,7 @@ class BusDeletion(Resource):
 @ns.route('/<string:room>/<int:bus>/<int:index>')
 class AssignSensorToPosition(Resource):
 
+	@api.marshal_with(sensor)
 	@api.expect(submit_sensor_position)
 	def put(self, room, bus, index):
 		"""

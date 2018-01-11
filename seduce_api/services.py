@@ -72,6 +72,7 @@ def add_assignment(room, bus, index, data):
 	position_id = get_position_by_values(room, bus, index).id
 	db.session.add(Assignment(sensor_id, position_id))
 	db.session.commit()
+	return get_sensor(sensor_id)
 
 def remove_assignment(room, bus, index):
 	position_id = get_position_by_values(room, bus, index).id
