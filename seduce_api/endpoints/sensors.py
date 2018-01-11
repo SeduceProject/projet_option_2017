@@ -3,8 +3,8 @@ import logging
 from flask import request
 from flask_restplus import Resource
 from seduce_api.restplus import api
-from seduce_api.serializers import sensor, position, history, submit_sensor
-from seduce_api.services import create_sensor, get_sensor, get_sensor_by_name, get_sensor_position, get_sensor_history, update_sensor, delete_sensor
+from seduce_api.serializers import sensor, position, submit_sensor
+from seduce_api.services import create_sensor, get_sensor, get_sensor_by_name, get_sensor_position, update_sensor, delete_sensor
 
 log = logging.getLogger(__name__)
 
@@ -45,8 +45,7 @@ class SensorIdentity(Resource):
 		"""
 		Updates the sensor.
 		"""
-		data = request.json
-		return update_sensor(id, data), 204
+		return update_sensor(id, request.json), 204
 
 
 @ns.route('/<int:id>/position')
@@ -80,5 +79,4 @@ class CreateSensor(Resource):
 		"""
 		Creates the sensor.
 		"""
-		data = request.json
-		return create_sensor(data), 201
+		return create_sensor(request.json), 201

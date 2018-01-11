@@ -44,6 +44,7 @@ def delete_sensor(id):
 # Positions
 
 def add_bus(room, data):
+	# TODO check relevance
 	bus_index = data.get('index')
 	size = data.get('size')
 	for i in xrange(size):
@@ -68,14 +69,27 @@ def get_position_by_values(room, bus, index):
 # Assignments
 
 def add_assignment(room, bus, index, data):
-	sensor_id = data.get('sensor')
 	position_id = get_position_by_values(room, bus, index).id
+	if get_assignments(room, bus, index).count() > 0:
+		raise Exception('There is already a sensor at this position.')
+
+	sensor_id = data.get('sensor')
+	sensor = get_sensor(sensor_id)
+	optional_previous_assignment = Assignment.query.filter(Assignment.id_sensor == sensor_id)
+	if optional_previous_assignment.count() > 0:
+		db.session.delete(optional_previous_assignment.one())
+
 	db.session.add(Assignment(sensor_id, position_id))
 	db.session.commit()
-	return get_sensor(sensor_id)
+	return sensor
+
+def get_assignments(room, bus, index):
+	return Assignment.query.filter(Assignment.id_position == get_position_by_values(room, bus, index).id)
+
+def get_assigned_sensor(room, bus, index):
+	return get_sensor(get_assignment(room, bus, index).one().id_sensor)
 
 def remove_assignment(room, bus, index):
-	position_id = get_position_by_values(room, bus, index).id
-	assignment = Assignment.query.filter(Assignment.id_position == position_id).one()
+	assignment = get_assignment(room, bus, index).one()
 	db.session.delete(assignment)
 	db.session.commit()

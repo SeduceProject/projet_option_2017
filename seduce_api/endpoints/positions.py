@@ -3,8 +3,8 @@ import logging
 from flask import request
 from flask_restplus import Resource
 from seduce_api.restplus import api
-from seduce_api.serializers import sensor, position, history, submit_sensor, submit_sensor_position, submit_bus
-from seduce_api.services import add_bus, remove_bus, remove_room, get_position_by_values, add_assignment, remove_assignment
+from seduce_api.serializers import sensor, position, submit_sensor, submit_sensor_position, submit_bus
+from seduce_api.services import add_bus, remove_bus, remove_room, get_position_by_values, add_assignment, get_assigned_sensor, remove_assignment
 
 log = logging.getLogger(__name__)
 
@@ -19,8 +19,7 @@ class RoomManagement(Resource):
 		"""
 		Adds a bus to the room with the given id and size.
 		"""
-		data = request.json
-		add_bus(room, data)
+		add_bus(room, request.json)
 		return None, 201
 
 	def delete(self, room):
@@ -50,23 +49,21 @@ class AssignSensorToPosition(Resource):
 		"""
 		Adds a sensor assignment to the given position.
 		"""
-		data = request.json
-		return add_assignment(room, bus, index, data), 200
+		return add_assignment(room, bus, index, request.json), 200
 
 	def delete(self, room, bus, index):
 		"""
 		Removes the assignment from the given position if it exists.
 		"""
-		data = request.json
 		remove_assignment(room, bus, index)
 		return None, 204
 
-#	@api.marshal_with(sensor)
-#	def get(self, room, bus, index):
-#		"""
-#		Retrieves the sensor information for a given position.
-#		"""
-#		return 200 #TODO
+	@api.marshal_with(sensor)
+	def get(self, room, bus, index):
+		"""
+		Retrieves the sensor information for a given position.
+		"""
+		return get_assigned_sensor(room, bus, index), 200
 
 
 #@ns.route('/<string:room>/<int:bus>/<int:index>/history')
