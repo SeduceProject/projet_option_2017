@@ -2,6 +2,7 @@ from flask_restplus import fields
 from seduce_api.restplus import api
 
 sensor = api.model("Sensors information", {
+	'id': fields.Integer(required=True, description='Sensor id'),
 	'name': fields.String(required=False, description='Sensor name'),
 	'mac': fields.String(required=True, description='Sensor mac'),
 	'type': fields.String(required=False, description='Sensor type'),

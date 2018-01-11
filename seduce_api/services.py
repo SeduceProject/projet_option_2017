@@ -56,7 +56,25 @@ def remove_bus(room, bus):
 		db.session.delete(p)
 	db.session.commit()
 
-def filter_position(room, bus, index):
+def remove_room(room):
+	positions = Position.query.filter(Position.room == room)
+	for p in positions:
+		db.session.delete(p)
+	db.session.commit()
+
+def get_position_by_values(room, bus, index):
 	return Position.query.filter(Sensor.room == room and Sensor.bus == bus and Sensor.index == index).one()
 
 # Assignments
+
+def add_assignment(room, bus, index, data):
+	sensor_id = data.get('sensor')
+	position_id = get_position_by_values(room, bus, index).id
+	db.session.add(Assignment(sensor_id, position_id))
+	db.session.commit()
+
+def remove_assignment(room, bus, index):
+	position_id = get_position_by_values(room, bus, index).id
+	assignment = Assignment.query.filter(Assignment.id_position == position_id).one()
+	db.session.delete(assignment)
+	db.session.commit()
