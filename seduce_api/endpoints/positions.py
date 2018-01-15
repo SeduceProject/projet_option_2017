@@ -19,15 +19,13 @@ class RoomManagement(Resource):
 		"""
 		Adds a bus to the room with the given id and size.
 		"""
-		add_bus(room, request.json)
-		return None, 201
+		return add_bus(room, request.json), 201
 
 	def delete(self, room):
 		"""
 		Deletes the room.
 		"""
-		remove_room(room)
-		return None, 204
+		return remove_room(room), 204
 
 @ns.route('/<string:room>/<int:bus>')
 class BusDeletion(Resource):
@@ -36,8 +34,7 @@ class BusDeletion(Resource):
 		"""
 		Deletes a bus from the room with the given id.
 		"""
-		remove_bus(room, bus)
-		return None, 204
+		return remove_bus(room, bus), 204
 
 
 @ns.route('/<string:room>/<int:bus>/<int:index>')
@@ -55,8 +52,7 @@ class AssignSensorToPosition(Resource):
 		"""
 		Removes the assignment from the given position if it exists.
 		"""
-		remove_assignment(room, bus, index)
-		return None, 204
+		return remove_assignment(room, bus, index), 204
 
 	@api.marshal_with(sensor)
 	def get(self, room, bus, index):

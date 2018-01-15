@@ -36,8 +36,7 @@ class SensorIdentity(Resource):
 		"""
 		Deletes the sensor with the given id.
 		"""
-		delete_sensor(id)
-		return None, 204
+		return delete_sensor(id), 204
 
 	@api.marshal_with(sensor)
 	@api.expect(submit_sensor)
@@ -56,7 +55,7 @@ class PositionSensorById(Resource):
 		"""
 		Retrieves the position of a sensor with the given id.
 		"""
-		return get_sensor_position(id), 200
+		return get_sensor_position(id, request.json), 200
 
 
 #@ns.route('/<int:id>/history')

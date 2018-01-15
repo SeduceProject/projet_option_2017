@@ -20,11 +20,14 @@ def get_sensor(id):
 def get_sensor_by_name(name):
 	return Sensor.query.filter(Sensor.name == name).one()
 
-def get_sensor_position(id):
-	return Position.query.get(id)
+def get_sensor_position(id, data):
+	optional_assignment = get_assignments(data.get('room'), data.get('bus'), data.get('index'))
+	if optional_assignment.count() == 0:
+		raise Exception('This sensor is not assigned currently.')
+	return Position.query.get(optional_assignment.one().id_position)
 
-def get_sensor_history(id):
-	return History.query.get(id)
+#def get_sensor_history(id):
+#	return History.query.get(id)
 
 def update_sensor(id, data):
 	sensor = get_sensor(id)
