@@ -4,18 +4,13 @@ from database.models import Sensor, Position, Assignment, History
 # Sensors
 
 def create_sensor(data):
-	name = data.get('name')
-	mac = data.get('mac')
-	type = data.get('type')
-	model = data.get('model')
-	state = data.get('state')
-	sensor = Sensor(name, mac, type, model, state)
+	sensor = Sensor(data.get('name'), data.get('mac'), data.get('type'), data.get('model'), data.get('state'))
 	db.session.add(sensor)
 	db.session.commit()
 	return sensor
 
 def get_sensor(id):
-	return Sensor.query.get(id)
+	return Sensor.query.filter(Sensor.id == id).one()
 
 def get_sensor_by_name(name):
 	return Sensor.query.filter(Sensor.name == name).one()
@@ -24,7 +19,7 @@ def get_sensor_position(id, data):
 	optional_assignment = get_assignments(data.get('room'), data.get('bus'), data.get('index'))
 	if optional_assignment.count() == 0:
 		raise Exception('This sensor is not assigned currently.')
-	return Position.query.get(optional_assignment.one().id_position)
+	return Position.query.filter(Position.id == optional_assignment.one().id_position)
 
 #def get_sensor_history(id):
 #	return History.query.get(id)
@@ -41,8 +36,7 @@ def update_sensor(id, data):
 	return sensor
 
 def delete_sensor(id):
-	sensor = get_sensor(id)
-	db.session.delete(sensor)
+	db.session.delete(get_sensor(id))
 	db.session.commit()
 
 # Positions
