@@ -1,0 +1,30 @@
+salle1, bus 0 [5]
+
+{
+  "id": 1,
+  "mac": "AB:CD:EF",
+  "model": "thermo1",
+  "name": "Arthur",
+  "state": 0,
+  "type": "thermometre"
+}
+
+{
+  "id": 2,
+  "mac": "GH:IJ:KL",
+  "model": "wattm",
+  "name": "Bernard",
+  "state": 0,
+  "type": "wattmetre"
+}
+
+{
+  "id": 3,
+  "mac": "ZY:XW:VU",
+  "model": "thermo1",
+  "name": "Claude",
+  "state": 0,
+  "type": "thermometre"
+}
+
+Arthur (1) en position [salle1, 0, 0]
