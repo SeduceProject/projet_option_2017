@@ -48,7 +48,7 @@ history_of_sensor_element = api.model("Dated positions of a sensor", {
 	'position': fields.Nested(position)
 })
 
-history_of_sensor = api.inherit("History of a sensor's positions", {
+history_of_sensor = api.model("History of a sensor's positions", {
     'positions': fields.List(fields.Nested(history_of_sensor_element))
 })
 
@@ -58,6 +58,6 @@ history_of_position_element = api.model("Dated sensors of a position", {
 	'sensor': fields.Nested(sensor)
 })
 
-history_of_position = api.inherit("History of a position's sensors", {
+history_of_position = api.model("History of a position's sensors", {
     'sensors': fields.List(fields.Nested(history_of_position_element))
 })
