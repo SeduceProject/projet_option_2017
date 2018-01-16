@@ -36,7 +36,7 @@ class Position(db.Model):
 
 class Assignment(db.Model):
     __tablename__ = "assignments"
-    #id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     id_position = Column(Integer, ForeignKey('positions.id', ondelete="CASCADE"), nullable=False, unique=True)
     id_sensor = Column(Integer, ForeignKey('sensors.id', ondelete="CASCADE"), nullable=False, unique=True)
     
@@ -47,17 +47,16 @@ class Assignment(db.Model):
  
 class History(db.Model):
     __tablename__ = "history"
-    #id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     id_position = Column(Integer, ForeignKey('positions.id', ondelete="SET NULL"), nullable=False)
     id_sensor = Column(Integer, ForeignKey('sensors.id', ondelete="SET NULL"), nullable=False)
     start_of_service = Column(TIMESTAMP, nullable=False)
     end_of_service = Column(TIMESTAMP, nullable=True)
     
-    def __init__(self, id_sensor, id_position):#, start_of_service, end_of_service):
+    def __init__(self, id_sensor, id_position):
         self.id_sensor = id_sensor
         self.id_position = id_position
-        self.start_of_service = func.now()#start_of_service
-        #self.end_of_service = end_of_service
+        self.start_of_service = func.now()
     
     def close_history(self):
 		self.end_of_service = func.now()

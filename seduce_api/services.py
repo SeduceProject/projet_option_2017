@@ -5,9 +5,9 @@ from database.models import Sensor, Position, Assignment, History
 # Sensors
 
 def create_sensor(data):
-	if Sensor.query.filter(Sensor.mac == mac).count() > 0:
+	if Sensor.query.filter(Sensor.mac == data.get('mac')).count() > 0:
 		raise Exception('A sensor with this mac already exists.')
-	if Sensor.query.filter(Sensor.name == name).count() > 0:
+	if Sensor.query.filter(Sensor.name == data.get('name')).count() > 0:
 		raise Exception('A sensor with this name already exists.')
 
 	sensor = Sensor(data.get('name'), data.get('mac'), data.get('type'), data.get('model'), data.get('state'))
@@ -47,7 +47,7 @@ def delete_sensor(id):
 
 def add_bus(room, data):
 	bus_index = data.get('index')
-	if Position.query.filter(Position.room == room).filter(Position.bus == bus_index).count() > 0:
+	if Position.query.filter(and_(Position.room == room, Position.bus == bus_index)).count() > 0:
 		raise Exception('A bus with this id already exists in this room.')
 
 	size = data.get('size')
@@ -59,7 +59,7 @@ def add_bus(room, data):
 	db.session.commit()
 
 def remove_bus(room, bus):
-	positions = Position.query.filter(Position.room == room).filter(Position.bus == bus)
+	positions = Position.query.filter(and_(Position.room == room, Position.bus == bus))
 	for p in positions:
 		db.session.delete(p)
 	db.session.commit()
@@ -71,7 +71,7 @@ def remove_room(room):
 	db.session.commit()
 
 def get_position_by_values(room, bus, index):
-	return Position.query.filter(Position.room == room).filter(Position.bus == bus).filter(Position.index == index).one()
+	return Position.query.filter(and_(Position.room == room, Position.bus == bus, Position.index == index)).one()
 
 
 # Assignments
@@ -115,7 +115,6 @@ def delete_assignment(assignment):
 
 def close_sensor_history_element(sensor_id):
 	history = History.query.filter(and_(History.end_of_service.is_(None), History.id_sensor == sensor_id)).one()
-	#history.end_of_service = end_date
 	history.close_history()
 	db.session.add(history)
 	db.commit()
