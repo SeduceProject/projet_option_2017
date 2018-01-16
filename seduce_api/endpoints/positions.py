@@ -3,8 +3,8 @@ import logging
 from flask import request
 from flask_restplus import Resource
 from seduce_api.restplus import api
-from seduce_api.serializers import sensor, position, submit_sensor, submit_sensor_position, submit_bus
-from seduce_api.services import add_bus, remove_bus, remove_room, get_position_by_values, add_assignment, get_assigned_sensor, remove_assignment
+from seduce_api.serializers import sensor, position, history, submit_sensor, submit_sensor_position, submit_bus
+from seduce_api.services import add_bus, remove_bus, filter_position
 
 log = logging.getLogger(__name__)
 
@@ -14,20 +14,16 @@ ns = api.namespace('position', description='Position operations')
 @ns.route('/<string:room>')
 class RoomManagement(Resource):
 
+	#@api.marshal_with(bus_index)
 	@api.expect(submit_bus)
 	def post(self, room):
 		"""
 		Adds a bus to the room with the given id and size.
 		"""
-		add_bus(room, request.json)
-		return None, 201
+		data = request.json
+		return add_bus(room, data), 201
 
-	def delete(self, room):
-		"""
-		Deletes the room.
-		"""
-		remove_room(room)
-		return None, 204
+	# TODO delete whole room
 
 @ns.route('/<string:room>/<int:bus>')
 class BusDeletion(Resource):
@@ -37,33 +33,27 @@ class BusDeletion(Resource):
 		Deletes a bus from the room with the given id.
 		"""
 		remove_bus(room, bus)
-		return None, 204
+		return 200
 
 
 @ns.route('/<string:room>/<int:bus>/<int:index>')
 class AssignSensorToPosition(Resource):
 
-	@api.marshal_with(sensor)
 	@api.expect(submit_sensor_position)
 	def put(self, room, bus, index):
 		"""
-		Sets a sensor assignment to the given position.
+		Adds a sensor to a given position or remove it if the id is null.
 		"""
-		return add_assignment(room, bus, index, request.json), 200
-
-	def delete(self, room, bus, index):
-		"""
-		Removes the assignment from the given position if it exists.
-		"""
-		remove_assignment(room, bus, index)
-		return None, 204
+		data = request.json
+		# TODO set sensor to position
+		return 200
 
 	@api.marshal_with(sensor)
 	def get(self, room, bus, index):
 		"""
 		Retrieves the sensor information for a given position.
 		"""
-		return get_assigned_sensor(room, bus, index), 200
+		return filter_position(room, bus, index), 200
 
 
 #@ns.route('/<string:room>/<int:bus>/<int:index>/history')

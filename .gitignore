@@ -8,3 +8,7 @@
 
 *.pyc
 __pycache__/
+
+## Folders :
+.idea/
+venv/
