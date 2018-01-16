@@ -93,8 +93,7 @@ def get_assigned_sensor(room, bus, index):
 	if assignments.count() > 0:
 		return get_sensor(assignments.one().id_sensor)
 	else:
-		# TODO handle this properly
-		return Sensor("EMPTY", "", "", "", -1)
+		raise Exception('There is no sensor at this position.')
 
 def remove_assignment(room, bus, index):
 	assignment = get_assignments(room, bus, index).one()
