@@ -9,6 +9,7 @@ log = logging.getLogger(__name__)
 api = Api(version='1.0', title='Seduce API',
 		description='Seduce Project - Thermal sensors monitoring')
 
+
 @api.errorhandler
 def default_error_handler(e):
 	message = 'Unhandled exception caught.'

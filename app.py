@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 
 base_url = 'seduce'
 
+
 def configure_app(flask_app):
 	flask_app.config['SERVER_NAME'] = settings.FLASK_SERVER_NAME
 	flask_app.config['SQLALCHEMY_DATABASE_URI'] = settings.SQLALCHEMY_DATABASE_URI
@@ -40,6 +41,7 @@ def main():
 		init_db(app)
 	log.info('>>>>> Starting development server at http://{}/'+base_url+'/ <<<<<'.format(app.config['SERVER_NAME']))
 	app.run(debug=settings.FLASK_DEBUG)
+
 
 if __name__ == "__main__":
 	main()
