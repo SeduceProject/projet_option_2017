@@ -1,0 +1,123 @@
+https://www.codementor.io/garethdwyer/building-a-telegram-bot-using-python-part-1-goi5fncay
+https://www.codementor.io/garethdwyer/building-a-chatbot-using-telegram-and-python-part-2-sqlite-databse-backend-m7o96jger?icn=post-goi5fncay&ici=post-m7o96jger
+TELEGRAM BOT
+
+-- Installations
+pip install requests
+	-> pour les requêtes http
+
+-- Créer un bot
+créer un compte Telegram sur le site : web.telegram.org
+suivre les instructions
+
+username : projet_seduce_bot
+token : 472925886:AAHoewEo-y9D9wIaljXJllows3UNIPHOIao
+
+-- Interragir avec le bot via un browser
+https://api.telegram.org/bot472925886:AAHoewEo-y9D9wIaljXJllows3UNIPHOIao/getme
+Ca renvoie des infos de base sur notre bot
+https://api.telegram.org/bot472925886:AAHoewEo-y9D9wIaljXJllows3UNIPHOIao/getUpdates
+Ca renvoie les messages envoyés à notre bot
+telegram.me/projet_seduce_bot
+Ca nous dirige vers notre bot pour lui parler
+https://api.telegram.org/bot472925886:AAHoewEo-y9D9wIaljXJllows3UNIPHOIao/sendMessage?chat_id=523966133&text="Nickel au poil mon gros"
+Ca envoie un message depuis notre bot, mais il faut bien faire gaffe à quel id on choppe dans le json : il faut celui qui est dans la balise <chat>
+
+-- Faire des trucs en python avec le bot
+""""""
+import json 
+import requests
+import time
+import urllib
+
+TOKEN = "472925886:AAHoewEo-y9D9wIaljXJllows3UNIPHOIao"
+URL = "https://api.telegram.org/bot{}/".format(TOKEN)
+
+
+def get_url(url):
+    response = requests.get(url)
+    content = response.content.decode("utf8")
+    return content
+
+def get_json_from_url(url):
+    content = get_url(url)
+    js = json.loads(content)
+    return js
+
+def get_updates(offset=None):
+    url = URL + "getUpdates?timeout=100"
+    if offset:
+        url += "&offset={}".format(offset)
+    js = get_json_from_url(url)
+    return js
+
+def get_last_update_id(updates):
+    update_ids = []
+    for update in updates["result"]:
+        update_ids.append(int(update["update_id"]))
+    return max(update_ids)
+
+def get_last_chat_id_and_text(updates):
+    num_updates = len(updates["result"])
+    last_update = num_updates - 1
+    text = updates["result"][last_update]["message"]["text"]
+    chat_id = updates["result"][last_update]["message"]["chat"]["id"]
+    return (text, chat_id)
+
+def echo_all(updates):
+    for update in updates["result"]:
+        try:
+            text = update["message"]["text"]
+            chat = update["message"]["chat"]["id"]
+            send_message(text, chat)
+        except Exception as e:
+            print(e)
+
+def send_message(text, chat_id):
+    text = urllib.parse.quote_plus(text)
+    url = URL + "sendMessage?text={}&chat_id={}".format(text, chat_id)
+    get_url(url)    
+
+def main():
+    last_update_id = None
+    while True:
+        updates = get_updates(last_update_id)
+        if len(updates["result"]) > 0:
+            last_update_id = get_last_update_id(updates) + 1
+            echo_all(updates)
+        time.sleep(0.5)
+
+
+if __name__ == '__main__':
+    main()
+""""""
+
+Voila c'est des trucs qui en théorie font en gros la même chose que les requêtes précédentes dans le browser.
+
+-- Problèmes avec cette première version
+Déjà quand on veut récupérer un message, on re-télécharge toutes les conversations et ça c'est moyen.
+En plus, y'a pas de système de notifications ou de maj instantanée, il faut rafraîchir manuellement et c'est chiant.
+Du coup je modifie le code de là-haut pour le rendre plus cool : 
+	- on utilise time pour faire des appels au serveur réguliers
+	- on change les deux dernières lignes pour que ça (ça = le dernier message consulté) se rafraichisse 2 fois par seconde et que ça réponde la même chose.
+
+-- Faire du code plus joli qui reconnaît quels messages on a déjà consulté ou non
+Je remodifie le code là-haut en ajoutant/modifiant les fonctions :
+	- get_updates, qui prend maintenant un offset en argument, et cet offset sert à ce qu'on ne prenne que les messages reçus ayant un id supérieur à lui
+	- get_last_update_id, qui renvoie le plus grand id des  messages qu'on a déjà consulté
+	- echo_all, qui sert à réponder à tous les messages qu'on consulte
+Et ensuite je change un peu le code du main pour qu'il utilise les fonction rajoutées, et qu'il ne retélécharge plus l'intégralité des messages pour obtenir les derniers.
+
+-- Encore un problème : on surcharge le serveur avec nos deux requêtes par seconde...
+Là on modifie la fonction get_updates, pour qu'à la place de se terminer hyper vite, elle attende 100 secondes une réponse, et si y'en a pas bah elle s'arrête, et si y'en a bah alle l'envoie et elle s'arrête.
+
+-- L'encodage
+On utilise la librairie urllib, notamment dans la fonction send_message, qui prend en compte tous les caractères spéciaux. Et voilà, ça fait la base !!
+
+-- Des petits commentaires sur ce qu'on a
+Là ça marche, ça répète bien tout ce que je dis :D
+
+
+	
+
+  
