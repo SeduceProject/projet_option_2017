@@ -10,11 +10,34 @@ api = Api(version='1.0', title='Seduce API',
 		description='Seduce Project - Thermal sensors monitoring')
 
 
+# Exceptions
+
 class SensorNotFoundException(Exception):
-	
 	def __init__(self):
-		super(SensorNotFoundException, self).__init__("mon message")
-		
+		super(SensorNotFoundException, self).__init__("Sensor not found")
+
+class SensorNotValidException(Exception):
+	def __init__(self):
+		super(SensorNotValidException, self).__init__("Sensor not valid")
+
+class PositionNotFoundException(Exception):
+	def __init__(self):
+		super(PositionNotFoundException, self).__init__("Position not found")
+
+class PositionNotValidException(Exception):
+	def __init__(self):
+		super(PositionNotValidException, self).__init__("Position not valid")
+
+class AssignmentNotFoundException(Exception):
+	def __init__(self):
+		super(AssignmentNotFoundException, self).__init__("Assignment not found")
+
+class AssignmentNotValidException(Exception):
+	def __init__(self):
+		super(AssignmentNotValidException, self).__init__("Assignment not valid")
+
+
+# Error Handlers
 
 @api.errorhandler
 def default_error_handler(e):
@@ -26,5 +49,30 @@ def default_error_handler(e):
 
 @api.errorhandler(SensorNotFoundException)
 def handle_sensor_not_found_exception(error):
-    '''Return a custom message and 400 status code'''
+    '''In case of a sensor being not found.'''
     return {'message': 'No sensor found'}, 404
+
+@api.errorhandler(SensorNotValidException)
+def handle_sensor_not_valid_exception(error):
+    '''In case of a sensor being not valid.'''
+    return {'message': 'This is not a valid sensor'}, 412
+
+@api.errorhandler(PositionNotFoundException)
+def handle_position_not_found_exception(error):
+    '''In case of a position being not found.'''
+    return {'message': 'No position found'}, 404
+
+@api.errorhandler(PositionNotValidException)
+def handle_position_not_valid_exception(error):
+    '''In case of a position being not valid.'''
+    return {'message': 'This is not a valid position'}, 412
+
+@api.errorhandler(AssignmentNotFoundException)
+def handle_assignment_not_found_exception(error):
+    '''In case of an assignment being not found.'''
+    return {'message': 'No assignment found'}, 404
+
+@api.errorhandler(AssignmentNotValidException)
+def handle_assignment_not_valid_exception(error):
+    '''In case of aa assignment being not valid.'''
+    return {'message': 'This is not a valid assignment'}, 412

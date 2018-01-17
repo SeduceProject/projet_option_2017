@@ -51,6 +51,8 @@ def delete_sensor(id):
 
 def add_bus(room, data):
 	bus_index = data.get('index')
+	if bus_index < 0:
+		raise Exception('A bus id must be positive.')
 	if Position.query.filter(and_(Position.room == room, Position.bus == bus_index)).count() > 0:
 		raise Exception('A bus with this id already exists in this room.')
 
