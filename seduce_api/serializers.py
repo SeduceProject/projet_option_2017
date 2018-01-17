@@ -1,6 +1,9 @@
 from flask_restplus import fields
 from seduce_api.restplus import api
 
+
+# Sensors
+
 sensor = api.model("Sensors information", {
 	'id': fields.Integer(required=True, description='Sensor id'),
 	'name': fields.String(required=False, description='Sensor name'),
@@ -8,22 +11,6 @@ sensor = api.model("Sensors information", {
 	'type': fields.String(required=False, description='Sensor type'),
 	'model': fields.String(required=False, description='Sensor model'),
 	'state': fields.Integer(required=True, description='Sensor state')
-})
-
-position = api.model("Full description of a position", {
-	'room': fields.String(required=True, description='Room number'),
-	'bus': fields.Integer(required=True, description='Bus number'),
-	'index': fields.Integer(required=True, description='Bus index')
-})
-
-history_element = api.model("Dated position of a sensor", {
-	'start_of_service': fields.DateTime(required=True, description="Start date of a given position by a sensor"),
-	'end_of_service': fields.DateTime(required=False, description="End date of a given position by a sensor"),
-	'position': fields.Nested(position)
-})
-
-history = api.inherit("History of a sensor positions", {
-    'positions': fields.List(fields.Nested(history_element))
 })
 
 submit_sensor = api.model('Information for a sensor creation', {
@@ -34,6 +21,9 @@ submit_sensor = api.model('Information for a sensor creation', {
 	'state': fields.Integer(required=True, description='Sensor state')
 })
 
+
+# Positions
+
 submit_sensor_position = api.model('Information to move a sensor to a position', {
 	'sensor': fields.Integer(required=True, description='Sensor id')
 })
@@ -41,4 +31,33 @@ submit_sensor_position = api.model('Information to move a sensor to a position',
 submit_bus = api.model('Information to create a bus', {
 	'index': fields.Integer(required=True, description='Bus id'),
 	'size': fields.Integer(required=True, description='Bus size')
+})
+
+position = api.model("Full description of a position", {
+	'room': fields.String(required=True, description='Room number'),
+	'bus': fields.Integer(required=True, description='Bus number'),
+	'index': fields.Integer(required=True, description='Bus index')
+})
+
+
+# History
+
+history_of_sensor_element = api.model("Dated positions of a sensor", {
+	'start_of_service': fields.DateTime(required=True, description="Start date of a given position by a sensor"),
+	'end_of_service': fields.DateTime(required=False, description="End date of a given position by a sensor"),
+	'position': fields.Nested(position)
+})
+
+history_of_sensor = api.model("History of a sensor's positions", {
+    'positions': fields.List(fields.Nested(history_of_sensor_element))
+})
+
+history_of_position_element = api.model("Dated sensors of a position", {
+	'start_of_service': fields.DateTime(required=True, description="Start date of a given position by a sensor"),
+	'end_of_service': fields.DateTime(required=False, description="End date of a given position by a sensor"),
+	'sensor': fields.Nested(sensor)
+})
+
+history_of_position = api.model("History of a position's sensors", {
+    'sensors': fields.List(fields.Nested(history_of_position_element))
 })

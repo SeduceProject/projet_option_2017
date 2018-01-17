@@ -3,13 +3,25 @@ import json
 
 from flask import request
 from flask_restplus import Resource
+from seduce_api.serializers import sensor, position, submit_sensor, history_of_sensor
+from seduce_api.services import create_sensor, get_sensor, get_sensor_by_name, get_sensor_position, update_sensor, delete_sensor, get_sensor_history
 from seduce_api.restplus import api, SensorNotFoundException
-from seduce_api.serializers import sensor, position, history, submit_sensor
-from seduce_api.services import get_sensor, get_sensor_by_name, get_sensor_position, get_sensor_history, create_sensor, update_sensor, delete_sensor
 
 log = logging.getLogger(__name__)
 
 ns = api.namespace('sensors', description='Sensors operations')
+
+
+@ns.route('/')
+class CreateSensor(Resource):
+
+	@api.marshal_with(sensor)
+	@api.expect(submit_sensor)
+	def post(self):
+		"""
+		Creates a sensor.
+		"""
+		return create_sensor(request.json), 201
 
 
 @ns.route('/byName/<string:name>')
@@ -47,12 +59,12 @@ class SensorIdentity(Resource):
 		"""
 		Deletes the sensor with the given id.
 		"""
+		return delete_sensor(id), 204
 		try:
 			delete_sensor(id)
-			return 200
+			return 204
 		except Exception as e:
 			raise SensorNotFoundException()
-
 
 	@api.marshal_with(sensor)
 	@api.errorhandler
@@ -84,26 +96,12 @@ class PositionSensorById(Resource):
 			raise SensorNotFoundException()
 
 
-#@ns.route('/<int:id>/history')
-#class HistorySensorById(Resource):
-#
-#	@api.marshal_with(history)
-#	def get(self, id):
-#		"""
-#		Retrieves the position history of a sensor with the given id.
-#		"""
-#		return get_sensor_history(id)
+@ns.route('/<int:id>/history')
+class HistorySensorById(Resource):
 
-
-@ns.route('/')
-class CreateSensor(Resource):
-
-	@api.marshal_with(sensor)
-	@api.response(201, 'Sensor successfully created.')
-	@api.expect(submit_sensor)
-	def put(self):
+	@api.marshal_with(history_of_sensor)
+	def get(self, id):
 		"""
-		Creates the sensor.
+		Retrieves the position history of a sensor with the given id.
 		"""
-		data = request.json
-		return create_sensor(data), 201
+		return get_sensor_history(id), 200
