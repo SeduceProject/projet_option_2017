@@ -50,12 +50,12 @@ def default_error_handler(e):
 @api.errorhandler(SensorNotFoundException)
 def handle_sensor_not_found_exception(error):
     '''In case of a sensor being not found.'''
-    return {'message': 'No sensor found'}, 404
+    return {'message': error.message}, 404
 
 @api.errorhandler(SensorNotValidException)
 def handle_sensor_not_valid_exception(error):
     '''In case of a sensor being not valid.'''
-    return {'message': 'This is not a valid sensor'}, 412
+    return {'message': error.message}, 412
 
 @api.errorhandler(PositionNotFoundException)
 def handle_position_not_found_exception(error):
@@ -65,14 +65,14 @@ def handle_position_not_found_exception(error):
 @api.errorhandler(PositionNotValidException)
 def handle_position_not_valid_exception(error):
     '''In case of a position being not valid.'''
-    return {'message': 'This is not a valid position'}, 412
+    return {'message': error.message}, 412
 
 @api.errorhandler(AssignmentNotFoundException)
 def handle_assignment_not_found_exception(error):
     '''In case of an assignment being not found.'''
-    return {'message': 'No assignment found'}, 404
+    return {'message': error.message}, 404
 
 @api.errorhandler(AssignmentNotValidException)
 def handle_assignment_not_valid_exception(error):
     '''In case of an assignment being not valid.'''
-    return {'message': 'This is not a valid assignment'}, 412
+    return {'message': error.message}, 412

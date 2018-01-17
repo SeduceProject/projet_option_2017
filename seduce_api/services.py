@@ -9,6 +9,8 @@ from sqlalchemy.sql import and_
 # Sensors
 
 def create_sensor(data):
+	if len(data.get('mac')) == 0:
+		raise SensorNotValidException('A mac cannot be empty.')
 	if Sensor.query.filter(Sensor.mac == data.get('mac')).count() > 0:
 		raise SensorNotValidException('A sensor with mac ' + data.get('mac') + ' already exists.')
 	if Sensor.query.filter(Sensor.name == data.get('name')).count() > 0:
@@ -42,6 +44,8 @@ def get_sensor_position(id, data):
 def update_sensor(id, data):
 	sensor = get_sensor(id)
 
+	if len(data.get('mac')) == 0:
+		raise SensorNotValidException('A mac cannot be empty.')
 	mac_query = Sensor.query.filter(Sensor.mac == data.get('mac'))
 	if mac_query.count() == 1 and mac_query.one().id != id:
 		raise SensorNotValidException('A sensor with mac ' + data.get('mac') + ' already exists.')
