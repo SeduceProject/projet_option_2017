@@ -32,10 +32,7 @@ class SensorByName(Resource):
 		"""
 		Retrieves the sensor with the given name.
 		"""
-		try:
-			return get_sensor_by_name(name), 200
-		except Exception as e:
-			raise SensorNotFoundException()
+		return get_sensor_by_name(name), 200
 
 
 @ns.route('/<int:id>')
@@ -46,20 +43,14 @@ class SensorIdentity(Resource):
 		"""
 		Retrieves the sensor with the given id.
 		"""
-		try:
-			return get_sensor(id), 200
-		except Exception as e:
-			raise SensorNotFoundException()
+		return get_sensor(id), 200
 
 	@api.marshal_with(sensor)
 	def delete(self, id):
 		"""
 		Deletes the sensor with the given id.
 		"""
-		try:
-			delete_sensor(id), 204
-		except Exception as e:
-			raise SensorNotFoundException()
+		delete_sensor(id), 204
 
 	@api.expect(submit_sensor)
 	@api.marshal_with(sensor)
@@ -67,10 +58,7 @@ class SensorIdentity(Resource):
 		"""
 		Updates the sensor.
 		"""
-		try:
-			return update_sensor(id, request.json), 200
-		except Exception as e:
-			raise SensorNotFoundException()
+		return update_sensor(id, request.json), 200
 
 
 @ns.route('/<int:id>/position')
@@ -81,10 +69,7 @@ class PositionSensorById(Resource):
 		"""
 		Retrieves the position of a sensor with the given id.
 		"""
-		try:
-			return get_sensor_position(id), 200
-		except Exception as e:
-			raise SensorNotFoundException()
+		return get_sensor_position(id), 200
 
 
 @ns.route('/<int:id>/history')
