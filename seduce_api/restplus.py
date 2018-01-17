@@ -27,3 +27,14 @@ def default_error_handler(e):
 def handle_sensor_not_found_exception(error):
     '''Return a custom message and 400 status code'''
     return {'message': 'No sensor found'}, 404
+
+
+class EventNotFoundException(Exception):
+	
+	def __init__(self):
+		super(EventNotFoundException, self).__init__("mon message")
+
+@api.errorhandler(EventNotFoundException)
+def handle_event_not_found_exception(error):
+    '''Return a custom message and 400 status code'''
+    return {'message': 'No event found'}, 404

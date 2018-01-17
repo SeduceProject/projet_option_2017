@@ -2,6 +2,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, TIMESTAMP
 #from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
+from sqlalchemy.sql import func
  
 #Base = declarative_base()
 from database import db
@@ -60,6 +61,27 @@ class History(db.Model):
         self.id_position = id_position
         self.start_of_service = start_of_service
         self.end_of_service = end_of_service
+
+class Event(db.Model):
+    __tablename__ = "event"
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    title = Column(String(250), nullable=False)
+    importance = Column(Integer, nullable=False)
+    start = Column(TIMESTAMP, nullable=False)
+    end = Column(TIMESTAMP, nullable=True)
+    sensor = Column(Integer, nullable=False)
+    ended = Column(Integer, nullable=False, default = False)
+    
+    def __init__(self, title, importance, sensor, ended = False):
+        self.title = title
+        self.importance = importance
+        self.start = func.now()
+        self.sensor = sensor
+        if ended != None:
+            self.ended = ended
+
+    def close_history(self):
+        self.end = func.now()
     
  
 # Create an engine that stores data in the local directory's

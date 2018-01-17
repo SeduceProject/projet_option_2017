@@ -4,7 +4,7 @@ import json
 from flask import request
 from flask_restplus import Resource
 from seduce_api.restplus import api, SensorNotFoundException
-from seduce_api.serializers import sensor, position, history, submit_sensor
+from seduce_api.serializers import sensor, position, history, submit_sensor, event
 from seduce_api.services import get_sensor, get_sensor_by_name, get_sensor_position, get_sensor_history, create_sensor, update_sensor, delete_sensor
 
 log = logging.getLogger(__name__)

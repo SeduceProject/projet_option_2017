@@ -4,6 +4,7 @@ from flask import Flask, Blueprint
 import settings
 from seduce_api.endpoints.sensors import ns as sensors_namespace
 from seduce_api.endpoints.positions import ns as positions_namespace
+from seduce_api.endpoints.event import ns as event_namespace
 from seduce_api.restplus import api
 from database import db
 
@@ -27,6 +28,7 @@ def initialize_app(flask_app):
 	api.init_app(blueprint)
 	api.add_namespace(sensors_namespace)
 	api.add_namespace(positions_namespace)
+	api.add_namespace(event_namespace)
 	flask_app.register_blueprint(blueprint)
 
 def init_db(flask_app):

@@ -34,6 +34,15 @@ FOREIGN KEY (id_position) REFERENCES positions(id) ON DELETE SET NULL,
 FOREIGN KEY (id_capteur) REFERENCES capteurs(id) ON DELETE SET NULL
 );
 
+CREATE TABLE event (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+titre VARCHAR(100) NOT NULL,
+gravite INTEGER NOT NULL,
+debut TIMESTAMP NOT NULL
+fin TIMESTAMP NOT NULL
+sensor INTEGER NOT NULL
+);
+
 INSERT INTO capteurs (nom, mac, type_capteur, modele, etat) VALUES ("Test1", "00:00:00:00:01", "thermometre", "modele qui fonctionne bien avec un seche cheveux", 2);
 INSERT INTO capteurs (nom, mac, type_capteur, modele, etat) VALUES ("Test2", "00:00:00:00:02", "thermometre", "modele qui fonctionne juste bien", 1);
 INSERT INTO capteurs (nom, mac, type_capteur, etat) VALUES ("Test3", "00:00:00:00:03", "thermometre", 3);

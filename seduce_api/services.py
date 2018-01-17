@@ -1,5 +1,5 @@
 from database import db
-from database.models import Sensor, Position, Assignment, History
+from database.models import Sensor, Position, Assignment, History, Event
 
 # Sensors
 
@@ -60,5 +60,34 @@ def remove_bus(room, bus):
 
 def filter_position(room, bus, index):
 	return Position.query.filter(Sensor.room == room and Sensor.bus == bus and Sensor.index == index).one()
+
+#Event
+
+def create_event(data):
+	title = data.get('title')
+	importance = data.get('importance')
+	sensor = data.get('sensor')
+	ended = data.get('ended')
+	event = Event(title, importance, sensor, ended)
+	db.session.add(event)
+	db.session.commit()
+	return event
+
+def get_event(id):
+	return Event.query.get(id)
+
+def get_event_by_importance(name):
+	return Event.query.filter_by(importance = name).one()
+
+def get_event_by_sensor_id(sensor):
+	return Event.query.filter_by(sensor = sensor).one()
+
+def end_event(id):
+	event = get_event(id)
+	event.close_history()
+	event.ended = True
+	db.session.add(event)
+	db.session.commit()
+	return event
 
 # Assignments
