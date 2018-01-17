@@ -9,6 +9,6 @@
 *.pyc
 __pycache__/
 
-## Idea :
+## Folders :
 .idea/
 venv/

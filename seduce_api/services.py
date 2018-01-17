@@ -23,7 +23,7 @@ def get_sensor(id):
 	return Sensor.query.filter(Sensor.id == id).one()
 
 def get_sensor_by_name(name):
-	return Sensor.query.filter(Sensor.name == name).one()
+	return Sensor.query.filter_by(name = name).one()
 
 def get_sensor_position(id, data):
 	optional_assignment = get_assignments(data.get('room'), data.get('bus'), data.get('index'))
@@ -61,6 +61,7 @@ def add_bus(room, data):
 	for i in xrange(size):
 		db.session.add(Position(room, bus_index, i))
 	db.session.commit()
+	return submit_bus
 
 def remove_bus(room, bus):
 	positions = Position.query.filter(and_(Position.room == room, Position.bus == bus))

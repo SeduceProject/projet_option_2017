@@ -14,6 +14,7 @@ ns = api.namespace('position', description='Position operations')
 @ns.route('/<string:room>')
 class RoomManagement(Resource):
 
+	#@api.marshal_with(bus_index)
 	@api.expect(submit_bus)
 	def post(self, room):
 		"""
@@ -41,17 +42,10 @@ class BusDeletion(Resource):
 @ns.route('/<string:room>/<int:bus>/<int:index>')
 class AssignSensorToPosition(Resource):
 
-	@api.marshal_with(sensor)
 	@api.expect(submit_sensor_position)
 	def put(self, room, bus, index):
 		"""
-		Sets a sensor assignment to the given position.
-		"""
-		return add_assignment(room, bus, index, request.json), 200
-
-	def delete(self, room, bus, index):
-		"""
-		Removes the assignment from the given position if it exists.
+		Adds a sensor to a given position or remove it if the id is null.
 		"""
 		return remove_assignment(room, bus, index), 204
 
@@ -60,7 +54,7 @@ class AssignSensorToPosition(Resource):
 		"""
 		Retrieves the sensor information for a given position.
 		"""
-		return get_assigned_sensor(room, bus, index), 200
+		return filter_position(room, bus, index), 200
 
 
 @ns.route('/<string:room>/<int:bus>/<int:index>/history')
