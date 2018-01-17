@@ -5,7 +5,7 @@ from flask import request
 from flask_restplus import Resource
 from seduce_api.serializers import sensor, position, submit_sensor, history_of_sensor
 from seduce_api.services import create_sensor, get_sensor_by_name, get_sensor, delete_sensor, update_sensor, get_sensor_position, get_sensor_history
-from seduce_api.restplus import api, SensorNotFoundException
+from seduce_api.restplus import api
 
 log = logging.getLogger(__name__)
 
@@ -15,8 +15,8 @@ ns = api.namespace('sensors', description='Sensors operations')
 @ns.route('/')
 class CreateSensor(Resource):
 
-	@api.marshal_with(sensor)
 	@api.expect(submit_sensor)
+	@api.marshal_with(sensor)
 	def post(self):
 		"""
 		Creates a sensor.
@@ -27,7 +27,6 @@ class CreateSensor(Resource):
 @ns.route('/byName/<string:name>')
 class SensorByName(Resource):
 
-	@api.errorhandler
 	@api.marshal_with(sensor)
 	def get(self, name):
 		"""
@@ -42,7 +41,6 @@ class SensorByName(Resource):
 @ns.route('/<int:id>')
 class SensorIdentity(Resource):
 
-	@api.errorhandler
 	@api.marshal_with(sensor)
 	def get(self, id):
 		"""
@@ -53,7 +51,6 @@ class SensorIdentity(Resource):
 		except Exception as e:
 			raise SensorNotFoundException()
 
-	@api.errorhandler
 	@api.marshal_with(sensor)
 	def delete(self, id):
 		"""
@@ -64,10 +61,8 @@ class SensorIdentity(Resource):
 		except Exception as e:
 			raise SensorNotFoundException()
 
-	@api.marshal_with(sensor)
-	@api.errorhandler
-	@api.response(200, 'Sensor successfully updated.')
 	@api.expect(submit_sensor)
+	@api.marshal_with(sensor)
 	def put(self, id):
 		"""
 		Updates the sensor.
@@ -81,7 +76,6 @@ class SensorIdentity(Resource):
 @ns.route('/<int:id>/position')
 class PositionSensorById(Resource):
 
-	@api.errorhandler
 	@api.marshal_with(position)
 	def get_position_sensor(self, id):
 		"""

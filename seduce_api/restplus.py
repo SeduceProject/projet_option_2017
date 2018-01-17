@@ -13,28 +13,29 @@ api = Api(version='1.0', title='Seduce API',
 # Exceptions
 
 class SensorNotFoundException(Exception):
-	def __init__(self):
-		super(SensorNotFoundException, self).__init__("Sensor not found")
+	def __init__(self, message="Sensor not found"):
+		super(SensorNotFoundException, self).__init__(message)
 
 class SensorNotValidException(Exception):
-	def __init__(self):
-		super(SensorNotValidException, self).__init__("Sensor not valid")
+	def __init__(self, message="Sensor not valid"):
+		super(SensorNotValidException, self).__init__(message)
 
 class PositionNotFoundException(Exception):
-	def __init__(self):
-		super(PositionNotFoundException, self).__init__("Position not found")
+	def __init__(self, message="Position not found"):
+		super(PositionNotFoundException, self).__init__(message)
 
 class PositionNotValidException(Exception):
-	def __init__(self):
-		super(PositionNotValidException, self).__init__("Position not valid")
+	def __init__(self, message="Position not valid"):
+		super(PositionNotValidException, self).__init__(message)
 
 class AssignmentNotFoundException(Exception):
-	def __init__(self):
-		super(AssignmentNotFoundException, self).__init__("Assignment not found")
+	def __init__(self, message="Assignment not found"):
+		print "******************* hey Arnold ! *********"
+		super(AssignmentNotFoundException, self).__init__(message)
 
 class AssignmentNotValidException(Exception):
-	def __init__(self):
-		super(AssignmentNotValidException, self).__init__("Assignment not valid")
+	def __init__(self, message="Assignment not valid"):
+		super(AssignmentNotValidException, self).__init__(message)
 
 
 # Error Handlers
@@ -47,6 +48,7 @@ def default_error_handler(e):
 	if not settings.FLASK_DEBUG:
 		return {'message': message}, 500
 
+obsolete = """
 @api.errorhandler(SensorNotFoundException)
 def handle_sensor_not_found_exception(error):
     '''In case of a sensor being not found.'''
@@ -66,13 +68,13 @@ def handle_position_not_found_exception(error):
 def handle_position_not_valid_exception(error):
     '''In case of a position being not valid.'''
     return {'message': 'This is not a valid position'}, 412
-
+"""
 @api.errorhandler(AssignmentNotFoundException)
 def handle_assignment_not_found_exception(error):
     '''In case of an assignment being not found.'''
     return {'message': 'No assignment found'}, 404
-
+obsolete = """
 @api.errorhandler(AssignmentNotValidException)
 def handle_assignment_not_valid_exception(error):
     '''In case of aa assignment being not valid.'''
-    return {'message': 'This is not a valid assignment'}, 412
+    return {'message': 'This is not a valid assignment'}, 412"""
