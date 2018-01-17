@@ -1,5 +1,5 @@
 from database import db
-from database.models import Sensor, Position, Assignment, History
+from database.models import Sensor, Position, Assignment, History, Event
 from serializers import position as ser_position
 from serializers import sensor as ser_sensor
 from restplus import api, SensorNotFoundException, SensorNotValidException, PositionNotFoundException, PositionNotValidException, AssignmentNotFoundException, AssignmentNotValidException
@@ -104,6 +104,37 @@ def get_position_by_values(room, bus, index):
 		return query.one()
 	else:
 		raise PositionNotFoundException('Position [' + room + ', ' + str(bus) + ', ' + str(index) + '] does not exist.')
+
+
+# Events
+
+def create_event(data):
+	title = data.get('title')
+	importance = data.get('importance')
+	sensor = data.get('sensor')
+	ended = data.get('ended')
+	event = Event(title, importance, sensor, ended)
+	db.session.add(event)
+	db.session.commit()
+	return event
+
+def get_event(id):
+	return Event.query.get(id)
+
+def get_event_by_importance(name):
+	print 1
+	return Event.query.filter(Event.importance == name).one()
+
+def get_event_by_sensor_id(sensor):
+	return Event.query.filter(Event.sensor == sensor).one()
+
+def end_event(id):
+	event = get_event(id)
+	event.close_history()
+	event.ended = True
+	db.session.add(event)
+	db.session.commit()
+	return event
 
 
 # Assignments
