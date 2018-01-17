@@ -9,8 +9,11 @@
 *.pyc
 __pycache__/
 
+## Zips :
+*.zip
+
 ## Folders :
 .idea/
 venv/
 rest_api_demo/
-
+python-client-generated/
