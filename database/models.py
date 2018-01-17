@@ -59,4 +59,4 @@ class History(db.Model):
         self.start_of_service = func.now()
     
     def close_history(self):
-		self.end_of_service = func.now()
+        self.end_of_service = func.now()

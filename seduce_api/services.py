@@ -2,7 +2,7 @@ from database import db
 from database.models import Sensor, Position, Assignment, History
 from serializers import position as ser_position
 from serializers import sensor as ser_sensor
-from restplus import api
+from restplus import api, SensorNotFoundException, SensorNotValidException, PositionNotFoundException, PositionNotValidException, AssignmentNotFoundException, AssignmentNotValidException
 from sqlalchemy.sql import and_
 
 
@@ -10,9 +10,9 @@ from sqlalchemy.sql import and_
 
 def create_sensor(data):
 	if Sensor.query.filter(Sensor.mac == data.get('mac')).count() > 0:
-		raise Exception('A sensor with this mac already exists.')
+		raise SensorNotValidException('A sensor with mac ' + data.get('mac') + ' already exists.')
 	if Sensor.query.filter(Sensor.name == data.get('name')).count() > 0:
-		raise Exception('A sensor with this name already exists.')
+		raise SensorNotValidException('A sensor with name ' + data.get('name') + ' already exists.')
 
 	sensor = Sensor(data.get('name'), data.get('mac'), data.get('type'), data.get('model'), data.get('state'))
 	db.session.add(sensor)
@@ -20,19 +20,36 @@ def create_sensor(data):
 	return sensor
 
 def get_sensor(id):
-	return Sensor.query.filter(Sensor.id == id).one()
+	query = Sensor.query.filter(Sensor.id == id)
+	if query.count() == 1:
+		return query.one()
+	else:
+		raise SensorNotFoundException('There is no sensor with id ' + str(id) + '.')
 
 def get_sensor_by_name(name):
-	return Sensor.query.filter_by(name = name).one()
+	query = Sensor.query.filter_by(name = name)
+	if query.count() == 1:
+		return query.one()
+	else:
+		raise SensorNotFoundException('There is no sensor with name ' + name + '.')
 
 def get_sensor_position(id, data):
-	optional_assignment = get_assignments(data.get('room'), data.get('bus'), data.get('index'))
+	optional_assignment = get_assignments_aux(data.get('room'), data.get('bus'), data.get('index'))
 	if optional_assignment.count() == 0:
-		raise Exception('This sensor is not assigned currently.')
-	return Position.query.filter(Position.id == optional_assignment.one().id_position)
+		raise AssignmentNotFoundException('The sensor ' + str(id) + ' is not assigned currently.') # TODO error or message ?
+	return Position.query.filter(Position.id == optional_assignment.one().id_position).one()
 
 def update_sensor(id, data):
 	sensor = get_sensor(id)
+
+	mac_query = Sensor.query.filter(Sensor.mac == data.get('mac'))
+	if mac_query.count() == 1 and mac_query.one().id != id:
+		raise SensorNotValidException('A sensor with mac ' + data.get('mac') + ' already exists.')
+
+	name_query = Sensor.query.filter(Sensor.name == data.get('name'))
+	if name_query.count() == 1 and name_query.one().id != id:
+		raise SensorNotValidException('A sensor with name ' + data.get('name') + ' already exists.')
+
 	sensor.name = data.get('name')
 	sensor.mac = data.get('mac')
 	sensor.type = data.get('type')
@@ -51,12 +68,14 @@ def delete_sensor(id):
 
 def add_bus(room, data):
 	bus_index = data.get('index')
+	if bus_index < 0:
+		raise PositionNotValidException(str(bus_index) + ' is not a valid bus id.')
 	if Position.query.filter(and_(Position.room == room, Position.bus == bus_index)).count() > 0:
-		raise Exception('A bus with this id already exists in this room.')
+		raise PositionNotValidException('A bus with id ' + str(bus_index) + ' already exists in room ' + room + '.')
 
 	size = data.get('size')
 	if size < 1:
-		raise Exception('A bus must have at least one position.')
+		raise PositionNotValidException(str(size) + ' is not a valid bus size.')
 
 	for i in xrange(size):
 		db.session.add(Position(room, bus_index, i))
@@ -76,15 +95,19 @@ def remove_room(room):
 	db.session.commit()
 
 def get_position_by_values(room, bus, index):
-	return Position.query.filter(and_(Position.room == room, Position.bus == bus, Position.index == index)).one()
+	query = Position.query.filter(and_(Position.room == room, Position.bus == bus, Position.index == index))
+	if query.count() > 0:
+		return query.one()
+	else:
+		raise PositionNotFoundException('Position [' + room + ', ' + str(bus) + ', ' + str(index) + '] does not exist.')
 
 
 # Assignments
 
 def add_assignment(room, bus, index, data):
 	position_id = get_position_by_values(room, bus, index).id
-	if get_assignments(room, bus, index).count() > 0:
-		raise Exception('There is already a sensor at this position.')
+	if get_assignments_aux(room, bus, index).count() > 0:
+		raise AssignmentNotValidException('There is already a sensor at position [' + room + ', ' + str(bus) + ', ' + str(index) + '].')
 
 	sensor_id = data.get('sensor')
 	sensor = get_sensor(sensor_id)
@@ -97,18 +120,18 @@ def add_assignment(room, bus, index, data):
 	db.session.commit()
 	return sensor
 
-def get_assignments(room, bus, index):
+def get_assignments_aux(room, bus, index):
 	return Assignment.query.filter(Assignment.id_position == get_position_by_values(room, bus, index).id)
 
 def get_assigned_sensor(room, bus, index):
-	assignments = get_assignments(room, bus, index)
+	assignments = get_assignments_aux(room, bus, index)
 	if assignments.count() > 0:
 		return get_sensor(assignments.one().id_sensor)
 	else:
-		raise Exception('There is no sensor at this position.')
+		raise AssignmentNotFoundException('There is no sensor at position [' + room + ', ' + str(bus) + ', ' + str(index) + '].')
 
 def remove_assignment(room, bus, index):
-	delete_assignment(get_assignments(room, bus, index).one())
+	delete_assignment(get_assignments_aux(room, bus, index).one())
 
 def delete_assignment(assignment):
 	close_sensor_history_element(assignment.id_sensor)
