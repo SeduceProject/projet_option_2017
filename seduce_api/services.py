@@ -1,5 +1,9 @@
 from database import db
 from database.models import Sensor, Position, Assignment, History
+from serializers import position as ser_position
+from serializers import sensor as ser_sensor
+from restplus import api
+from sqlalchemy.sql import and_
 
 
 # Sensors
@@ -117,12 +121,23 @@ def close_sensor_history_element(sensor_id):
 	history = History.query.filter(and_(History.end_of_service.is_(None), History.id_sensor == sensor_id)).one()
 	history.close_history()
 	db.session.add(history)
-	db.commit()
 
 def get_sensor_history(sensor_id):
-	return History.query.filter(History.id_sensor == sensor_id)
-	# TODO what if there is no history ? Is that possible ?
+	return marshalling_aux_sensor(History.query.filter(History.id_sensor == sensor_id))
 
 def get_position_history(room, bus, index):
-	return History.query.filter(History.id_position == get_position_by_values(room, bus, index).id)
-	# TODO what if there is no history ? Is that possible ?
+	return marshalling_aux_position(History.query.filter(History.id_position == get_position_by_values(room, bus, index).id))
+
+def marshalling_aux_sensor(full_history):
+	result = []
+	for history in full_history:
+		position = Position.query.filter(Position.id == history.id_position).one()
+		result.append({"start_of_service": history.start_of_service, "end_of_service": history.end_of_service, "position": api.marshal(position, ser_position)})
+	return {"positions": result}
+
+def marshalling_aux_position(full_history):
+	result = []
+	for history in full_history:
+		sensor = Sensor.query.filter(Sensor.id == history.id_sensor).one()
+		result.append({"start_of_service": history.start_of_service, "end_of_service": history.end_of_service, "sensor": api.marshal(sensor, ser_sensor)})
+	return {"sensors": result}
