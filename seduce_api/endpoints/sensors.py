@@ -4,7 +4,7 @@ import json
 from flask import request
 from flask_restplus import Resource
 from seduce_api.serializers import sensor, position, submit_sensor, history_of_sensor
-from seduce_api.services import create_sensor, get_sensor, get_sensor_by_name, get_sensor_position, update_sensor, delete_sensor, get_sensor_history
+from seduce_api.services import create_sensor, get_sensor_by_name, get_sensor, delete_sensor, update_sensor, get_sensor_position, get_sensor_history
 from seduce_api.restplus import api, SensorNotFoundException
 
 log = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ class SensorByName(Resource):
 		Retrieves the sensor with the given name.
 		"""
 		try:
-			return get_sensor_by_name(name)
+			return get_sensor_by_name(name), 200
 		except Exception as e:
 			raise SensorNotFoundException()
 
@@ -49,7 +49,7 @@ class SensorIdentity(Resource):
 		Retrieves the sensor with the given id.
 		"""
 		try:
-			return get_sensor(id)
+			return get_sensor(id), 200
 		except Exception as e:
 			raise SensorNotFoundException()
 
@@ -59,10 +59,8 @@ class SensorIdentity(Resource):
 		"""
 		Deletes the sensor with the given id.
 		"""
-		return delete_sensor(id), 204
 		try:
-			delete_sensor(id)
-			return 204
+			delete_sensor(id), 204
 		except Exception as e:
 			raise SensorNotFoundException()
 
@@ -75,8 +73,7 @@ class SensorIdentity(Resource):
 		Updates the sensor.
 		"""
 		try:
-			data = request.json
-			return update_sensor(id, data), 200
+			return update_sensor(id, request.json), 200
 		except Exception as e:
 			raise SensorNotFoundException()
 
@@ -91,7 +88,7 @@ class PositionSensorById(Resource):
 		Retrieves the position of a sensor with the given id.
 		"""
 		try:
-			return get_sensor_position(id)
+			return get_sensor_position(id), 200
 		except Exception as e:
 			raise SensorNotFoundException()
 

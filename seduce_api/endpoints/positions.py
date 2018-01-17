@@ -4,7 +4,7 @@ from flask import request
 from flask_restplus import Resource
 from seduce_api.restplus import api
 from seduce_api.serializers import sensor, position, submit_sensor, submit_sensor_position, submit_bus, history_of_position
-from seduce_api.services import add_bus, remove_bus, remove_room, get_position_by_values, add_assignment, get_assigned_sensor, remove_assignment, get_position_history
+from seduce_api.services import add_bus, remove_room, remove_bus, add_assignment, get_assigned_sensor, get_position_history
 
 log = logging.getLogger(__name__)
 
@@ -14,7 +14,6 @@ ns = api.namespace('position', description='Position operations')
 @ns.route('/<string:room>')
 class RoomManagement(Resource):
 
-	#@api.marshal_with(bus_index)
 	@api.expect(submit_bus)
 	def post(self, room):
 		"""
@@ -47,14 +46,14 @@ class AssignSensorToPosition(Resource):
 		"""
 		Adds a sensor to a given position or remove it if the id is null.
 		"""
-		return remove_assignment(room, bus, index), 204
+		return add_assignment(room, bus, index), 201
 
 	@api.marshal_with(sensor)
 	def get(self, room, bus, index):
 		"""
 		Retrieves the sensor information for a given position.
 		"""
-		return filter_position(room, bus, index), 200
+		return get_assigned_sensor(room, bus, index), 200
 
 
 @ns.route('/<string:room>/<int:bus>/<int:index>/history')
