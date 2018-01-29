@@ -1,8 +1,8 @@
 from database import db
 from database.models import Sensor, Position, Assignment, History, Event
-from serializers import position as ser_position
-from serializers import sensor as ser_sensor
-from restplus import api, SensorNotFoundException, SensorNotValidException, PositionNotFoundException, PositionNotValidException, AssignmentNotFoundException, AssignmentNotValidException, EventNotFoundException
+from seduce_api.serializers import position as ser_position
+from seduce_api.serializers import sensor as ser_sensor
+from seduce_api.restplus import api, SensorNotFoundException, SensorNotValidException, PositionNotFoundException, PositionNotValidException, AssignmentNotFoundException, AssignmentNotValidException, EventNotFoundException
 from sqlalchemy.sql import and_
 
 
