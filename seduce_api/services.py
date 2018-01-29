@@ -1,8 +1,8 @@
 from database import db
-from database.models import Sensor, Position, Assignment, History
+from database.models import Sensor, Position, Assignment, History, Event
 from serializers import position as ser_position
 from serializers import sensor as ser_sensor
-from restplus import api, SensorNotFoundException, SensorNotValidException, PositionNotFoundException, PositionNotValidException, AssignmentNotFoundException, AssignmentNotValidException
+from restplus import api, SensorNotFoundException, SensorNotValidException, PositionNotFoundException, PositionNotValidException, AssignmentNotFoundException, AssignmentNotValidException, EventNotFoundException
 from sqlalchemy.sql import and_
 
 
@@ -84,7 +84,6 @@ def add_bus(room, data):
 	for i in xrange(size):
 		db.session.add(Position(room, bus_index, i))
 	db.session.commit()
-	return submit_bus
 
 def remove_bus(room, bus):
 	positions = Position.query.filter(and_(Position.room == room, Position.bus == bus))
@@ -104,6 +103,48 @@ def get_position_by_values(room, bus, index):
 		return query.one()
 	else:
 		raise PositionNotFoundException('Position [' + room + ', ' + str(bus) + ', ' + str(index) + '] does not exist.')
+
+
+# Events
+
+def create_event(data):
+	title = data.get('title')
+	importance = data.get('importance')
+	sensor = data.get('sensor')
+	ended = data.get('ended')
+	event = Event(title, importance, sensor, ended)
+	db.session.add(event)
+	db.session.commit()
+	return event
+
+def get_event(id):
+	query = Event.query.filter(Event.id == id)
+	if query.count() > 0:
+		return query.one()
+	else:
+		raise EventNotFoundException('There is no event with id ' + str(id) + '.')
+
+def get_event_by_importance(name):
+	query = Event.query.filter(Event.importance == name)
+	if query.count() > 0:
+		return query.one()
+	else:
+		raise EventNotFoundException('There is no event with importance ' + str(name) + '.')
+
+def get_event_by_sensor_id(sensor):
+	query = Event.query.filter(Event.sensor == sensor)
+	if query.count() > 0:
+		return query.one()
+	else:
+		raise EventNotFoundException('There is no event for sensor ' + str(sensor) + '.')
+
+def end_event(id):
+	event = get_event(id)
+	event.close_history()
+	event.ended = True
+	db.session.add(event)
+	db.session.commit()
+	return event
 
 
 # Assignments

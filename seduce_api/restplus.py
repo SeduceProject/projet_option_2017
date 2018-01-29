@@ -36,6 +36,10 @@ class AssignmentNotValidException(Exception):
 	def __init__(self, message="Assignment not valid"):
 		super(AssignmentNotValidException, self).__init__(message)
 
+class EventNotFoundException(Exception):
+	def __init__(self, message="Event not found"):
+		super(EventNotFoundException, self).__init__(message)
+
 
 # Error Handlers
 
@@ -76,3 +80,8 @@ def handle_assignment_not_found_exception(error):
 def handle_assignment_not_valid_exception(error):
     '''In case of an assignment being not valid.'''
     return {'message': error.message}, 412
+
+@api.errorhandler(EventNotFoundException)
+def handle_event_not_found_exception(error):
+    '''In case of an event being not found.'''
+    return {'message': error.message}, 404

@@ -41,12 +41,13 @@ class BusDeletion(Resource):
 @ns.route('/<string:room>/<int:bus>/<int:index>')
 class AssignSensorToPosition(Resource):
 
+	@api.marshal_with(sensor)
 	@api.expect(submit_sensor_position)
 	def put(self, room, bus, index):
 		"""
 		Adds a sensor to a given position or remove it if the id is null.
 		"""
-		return add_assignment(room, bus, index), 201
+		return add_assignment(room, bus, index, request.json), 201
 
 	@api.marshal_with(sensor)
 	def get(self, room, bus, index):
