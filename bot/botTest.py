@@ -6,7 +6,6 @@ import dbBot
 
 TOKEN_BOT = "472925886:AAHoewEo-y9D9wIaljXJllows3UNIPHOIao"
 URL_BOT = "https://api.telegram.org/bot{}/".format(TOKEN_BOT)
-URL_API = "localhost:8888/seduce"
 DB = dbBot.DBBot()
 CHAT = ""
 
@@ -34,10 +33,10 @@ def get_updates(offset=None):
 def get_events(offset=None):
 	"""if offset:
 		#ici on met l'url de la fonction de l'api qui renvoie tous les evenements a partir de offset 
-		#url = URL_API + "/events/get_all/" + str(offset)
+		#url = dbBot.URL_API + "/events/get_all/" + str(offset)
 	else:
 		#ici on met l'url de la fonction de l'api qui renvoie tous les evenements
-		#url = URL_API + "/events/get_all" """
+		#url = dbBot.URL_API + "/events/get_all" """
 	js = get_json_from_url(url)
 	return js
 	
@@ -77,9 +76,9 @@ def send_all_events(events):
 				print(e)
 
 def send_message(text):
-	if (text[:19]=="get_id_sensor/name/"):
+	if (text[:19]=="/sensors/id/byName/"):
 		name_s = text[19:]
-		res = str(DB.get_sensor(name_s)[0])
+		res = str(DB.get_sensor(name_s))
 		params = {"text": res, "chat_id": CHAT}
 	else:
 		params = {"text": text, "chat_id": CHAT}
