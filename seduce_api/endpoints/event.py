@@ -8,7 +8,7 @@ from seduce_api.services import create_event, get_event, get_event_by_importance
 from seduce_api.restplus import api
 
 # AFAC
-#from flask import json
+from flask import json
 
 
 log = logging.getLogger(__name__)
@@ -28,8 +28,8 @@ class CreateEvent(Resource):
 		return create_event(request.json), 201
 
 	# AFAC
-	#def put(self):
-		#return (json.dumps(api.__schema__))
+	def put(self):
+		return (json.dumps(api.__schema__))
 
 @ns.route('/byImportance/<int:name>')
 class EventByImportance(Resource):
