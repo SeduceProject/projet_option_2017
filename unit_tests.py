@@ -201,5 +201,80 @@ class TestSeduceApi(unittest.TestCase):
 			db.session.commit()
 
 
+	# Events
+
+	def test_create_event(self):
+		"""
+		Test case for create_event
+		"""
+		with self.app.app_context():
+			# Invalid sensor
+			with self.assertRaises(SensorNotFoundException):
+				ser.create_event(dict(title="title", importance=5, sensor=0, ended=False))
+			sensor = Sensor("name", "mac", "type", "model", 0)
+			db.session.add(sensor)
+			db.session.commit()
+			# OK
+			event = ser.create_event(dict(title="title", importance=5, sensor=sensor.id, ended=False))
+			db.session.delete(event)
+			db.session.delete(sensor)
+			db.session.commit()
+
+	def test_get_event(self):
+		"""
+		Test case for get_event
+		"""
+		with self.app.app_context():
+			# Invalid id
+			with self.assertRaises(EventNotFoundException):
+				ser.get_event(0)
+			sensor = Sensor("name", "mac", "type", "model", 0)
+			db.session.add(sensor)
+			db.session.commit()
+			event = Event("title", 5, sensor.id)
+			db.session.add(event)
+			db.session.commit()
+			# OK
+			found_event = ser.get_event(event.id)
+			self.assertEqual(event, found_event)
+			db.session.delete(event)
+			db.session.delete(sensor)
+			db.session.commit()
+
+	def test_get_event_by_importance(self):
+		"""
+		Test case for get_event_by_importance
+		"""
+		with self.app.app_context():
+			pass # TODO - la methode doit d'abord etre validee
+
+	def test_get_event_by_sensor_id(self):
+		"""
+		Test case for get_event_by_sensor_id
+		"""
+		with self.app.app_context():
+			pass # TODO - la methode doit d'abord etre validee
+
+	def test_end_event(self):
+		"""
+		Test case for end_event
+		"""
+		with self.app.app_context():
+			sensor = Sensor("name", "mac", "type", "model", 0)
+			db.session.add(sensor)
+			db.session.commit()
+			event = Event("title", 5, sensor.id)
+			db.session.add(event)
+			db.session.commit()
+			# OK
+			found_event = ser.end_event(event.id)
+			self.assertEqual(event.id, found_event.id)
+			self.assertIsNotNone(found_event.end)
+			self.assertTrue(found_event.ended)
+			db.session.delete(event)
+			db.session.delete(sensor)
+			db.session.commit()
+
+
 if __name__ == '__main__':
 	unittest.main()

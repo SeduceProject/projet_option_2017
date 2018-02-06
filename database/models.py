@@ -82,9 +82,9 @@ class Event(db.Model):
     start = Column(TIMESTAMP, nullable=False)
     end = Column(TIMESTAMP, nullable=True)
     sensor = Column(Integer, nullable=False)
-    ended = Column(Integer, nullable=False, default = False)
+    ended = Column(Integer, nullable=False, default=False)
 
-    def __init__(self, title, importance, sensor, ended = False):
+    def __init__(self, title, importance, sensor, ended=False):
         self.title = title
         self.importance = importance
         self.start = func.now()
@@ -94,6 +94,7 @@ class Event(db.Model):
 
     def close_history(self):
         self.end = func.now()
+        self.ended = True
 
 	def __eq__(self, other):
 		return self.__dict__ == other.__dict__

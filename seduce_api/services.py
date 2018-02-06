@@ -115,6 +115,10 @@ def create_event(data):
 	title = data.get('title')
 	importance = data.get('importance')
 	sensor = data.get('sensor')
+	try:
+		get_sensor(sensor)
+	except:
+		raise SensorNotFoundException('No event can be associated with a sensor with id ' + str(id) + ' because it does not exist.')
 	ended = data.get('ended')
 	event = Event(title, importance, sensor, ended)
 	db.session.add(event)
@@ -128,13 +132,15 @@ def get_event(id):
 	else:
 		raise EventNotFoundException('There is no event with id ' + str(id) + '.')
 
-def get_event_by_importance(name):
-	query = Event.query.filter(Event.importance == name)
+# TODO - il faut renvoyer une liste ici
+def get_event_by_importance(importance):
+	query = Event.query.filter(Event.importance == importance)
 	if query.count() > 0:
 		return query.one()
 	else:
-		raise EventNotFoundException('There is no event with importance ' + str(name) + '.')
+		raise EventNotFoundException('There is no event with importance ' + str(importance) + '.')
 
+# TODO - il faut renvoyer une liste ici
 def get_event_by_sensor_id(sensor):
 	query = Event.query.filter(Event.sensor == sensor)
 	if query.count() > 0:
@@ -145,7 +151,6 @@ def get_event_by_sensor_id(sensor):
 def end_event(id):
 	event = get_event(id)
 	event.close_history()
-	event.ended = True
 	db.session.add(event)
 	db.session.commit()
 	return event
