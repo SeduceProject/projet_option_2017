@@ -81,9 +81,13 @@ def add_bus(room, data):
 	if size < 1:
 		raise PositionNotValidException(str(size) + ' is not a valid bus size.')
 
+	result = []
 	for i in xrange(size):
-		db.session.add(Position(room, bus_index, i))
+		p = Position(room, bus_index, i)
+		db.session.add(p)
+		result.append(p)
 	db.session.commit()
+	return result
 
 def remove_bus(room, bus):
 	positions = Position.query.filter(and_(Position.room == room, Position.bus == bus))

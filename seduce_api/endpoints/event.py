@@ -7,9 +7,6 @@ from seduce_api.serializers import event, submit_event
 from seduce_api.services import create_event, get_event, get_event_by_importance, get_event_by_sensor_id, end_event
 from seduce_api.restplus import api
 
-# AFAC
-from flask import json
-
 
 log = logging.getLogger(__name__)
 
@@ -26,10 +23,6 @@ class CreateEvent(Resource):
 		Creates the event.
 		"""
 		return create_event(request.json), 201
-
-	# AFAC
-	def put(self):
-		return (json.dumps(api.__schema__))
 
 @ns.route('/byImportance/<int:name>')
 class EventByImportance(Resource):
