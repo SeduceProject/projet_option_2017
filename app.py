@@ -1,15 +1,14 @@
 import logging.config
 
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, render_template
+from flask_bootstrap import Bootstrap
 import settings
 from seduce_api.endpoints.sensors import ns as sensors_namespace
 from seduce_api.endpoints.positions import ns as positions_namespace
 from seduce_api.endpoints.event import ns as event_namespace
 from seduce_api.restplus import api
-from database import db
-from flask_bootstrap import Bootstrap
-from flask import render_template, Flask 
 from seduce_api import services
+from database import db
 
 app = Flask(__name__)
 logging.config.fileConfig('logging.conf')
