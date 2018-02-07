@@ -289,14 +289,50 @@ class TestSeduceApi(unittest.TestCase):
 		Test case for get_event_by_importance
 		"""
 		with self.app.app_context():
-			pass # TODO - la methode doit d'abord etre validee
+			# No event with given importance
+			with self.assertRaises(EventNotFoundException):
+				ser.get_event_by_importance(5)
+
+			sensor = Sensor("name", "mac", "type", "model", 0)
+			db.session.add(sensor)
+			db.session.commit()
+			event = Event("title", 5, sensor.id)
+			db.session.add(event)
+			db.session.commit()
+
+			# OK
+			events = ser.get_event_by_importance(5)
+			self.assertEqual(1, len(events))
+			self.assertEqual(event, events[0])
+
+			db.session.delete(event)
+			db.session.delete(sensor)
+			db.session.commit()
 
 	def test_get_event_by_sensor_id(self):
 		"""
 		Test case for get_event_by_sensor_id
 		"""
 		with self.app.app_context():
-			pass # TODO - la methode doit d'abord etre validee
+			# No event for given sensor
+			with self.assertRaises(EventNotFoundException):
+				ser.get_event_by_sensor_id(0)
+
+			sensor = Sensor("name", "mac", "type", "model", 0)
+			db.session.add(sensor)
+			db.session.commit()
+			event = Event("title", 5, sensor.id)
+			db.session.add(event)
+			db.session.commit()
+
+			# OK
+			events = ser.get_event_by_sensor_id(sensor.id)
+			self.assertEqual(1, len(events))
+			self.assertEqual(event, events[0])
+
+			db.session.delete(event)
+			db.session.delete(sensor)
+			db.session.commit()
 
 	def test_end_event(self):
 		"""

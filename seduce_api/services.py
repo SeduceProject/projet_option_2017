@@ -40,7 +40,7 @@ def get_sensor_position(id):
 	if assignments.count() > 0:
 		return Position.query.filter(Position.id == assignments.one().id_position).one()
 	else:
-		raise AssignmentNotFoundException('The sensor ' + str(id) + ' is not assigned currently.') # TODO error or message ?
+		raise AssignmentNotFoundException('The sensor ' + str(id) + ' is not assigned currently.')
 
 def update_sensor(id, data):
 	sensor = get_sensor(id)
