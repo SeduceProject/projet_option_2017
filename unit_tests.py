@@ -32,6 +32,7 @@ class TestSeduceApi(unittest.TestCase):
 			old_sensor = Sensor("old name", "old mac", "type", "model", 0)
 			db.session.add(old_sensor)
 			db.session.commit()
+
 			# Invalid mac
 			with self.assertRaises(SensorNotValidException):
 				ser.create_sensor(dict(name="name", mac="", type="type", model="model", state=0))
@@ -43,6 +44,7 @@ class TestSeduceApi(unittest.TestCase):
 				ser.create_sensor(dict(name="old name", mac="mac", type="type", model="model", state=0))
 			# OK
 			sensor = ser.create_sensor(dict(name="name", mac="mac", type="type", model="model", state=0))
+
 			db.session.delete(sensor)
 			db.session.delete(old_sensor)
 			db.session.commit()
@@ -55,12 +57,15 @@ class TestSeduceApi(unittest.TestCase):
 			# Wrong id
 			with self.assertRaises(SensorNotFoundException):
 				ser.get_sensor(0)
+
 			sensor = Sensor("name", "mac", "type", "model", 0)
 			db.session.add(sensor)
 			db.session.commit()
+
 			# OK
 			found_sensor = ser.get_sensor(sensor.id)
 			self.assertEqual(sensor, found_sensor)
+
 			db.session.delete(sensor)
 			db.session.commit()
 
@@ -72,12 +77,15 @@ class TestSeduceApi(unittest.TestCase):
 			# Wrong name
 			with self.assertRaises(SensorNotFoundException):
 				ser.get_sensor_by_name("not a name")
+
 			sensor = Sensor("name", "mac", "type", "model", 0)
 			db.session.add(sensor)
 			db.session.commit()
+
 			# OK
 			found_sensor = ser.get_sensor_by_name(sensor.name)
 			self.assertEqual(sensor, found_sensor)
+
 			db.session.delete(sensor)
 			db.session.commit()
 
@@ -86,7 +94,26 @@ class TestSeduceApi(unittest.TestCase):
 		Test case for get_sensor_position
 		"""
 		with self.app.app_context():
-			pass # TODO
+			sensor = Sensor("name", "mac", "type", "model", 0)
+			db.session.add(sensor)
+			db.session.commit()
+			position = Position("room", 1, 0)
+			db.session.add(position)
+			db.session.commit()
+
+			# Sensor not assigned
+			with self.assertRaises(AssignmentNotFoundException):
+				ser.get_sensor_position(sensor.id)
+
+			ser.add_assignment("room", 1, 0, dict(sensor=sensor.id))
+
+			# OK
+			found_position = ser.get_sensor_position(sensor.id)
+			self.assertEqual(position, found_position)
+
+			db.session.delete(sensor)
+			db.session.delete(position)
+			db.session.commit()
 
 	def test_update_sensor(self):
 		"""
@@ -98,6 +125,7 @@ class TestSeduceApi(unittest.TestCase):
 			db.session.add(old_sensor)
 			db.session.add(other_sensor)
 			db.session.commit()
+
 			# Invalid mac
 			with self.assertRaises(SensorNotValidException):
 				ser.update_sensor(old_sensor.id, dict(name="new name", mac="", type="type", model="model", state=0))
@@ -111,6 +139,7 @@ class TestSeduceApi(unittest.TestCase):
 			sensor = ser.update_sensor(old_sensor.id, dict(name="new name", mac="new mac", type="type", model="model", state=0))
 			# OK
 			sensor = ser.update_sensor(old_sensor.id, dict(name="another new name", mac="new mac", type="type", model="model", state=0))
+
 			db.session.delete(sensor)
 			db.session.delete(old_sensor)
 			db.session.delete(other_sensor)
@@ -124,6 +153,7 @@ class TestSeduceApi(unittest.TestCase):
 			sensor = Sensor("name", "mac", "type", "model", 0)
 			db.session.add(sensor)
 			db.session.commit()
+
 			# OK
 			ser.delete_sensor(sensor.id)
 			with self.assertRaises(SensorNotFoundException):
@@ -140,6 +170,7 @@ class TestSeduceApi(unittest.TestCase):
 			old_position = Position("room", 1, 0)
 			db.session.add(old_position)
 			db.session.commit()
+
 			# Invalid bus id
 			with self.assertRaises(PositionNotValidException):
 				ser.add_bus("room", dict(index=-1, size=2))
@@ -152,6 +183,7 @@ class TestSeduceApi(unittest.TestCase):
 			# OK
 			positions_list = ser.add_bus("room", dict(index=0, size=2))
 			self.assertEqual(2, len(positions_list))
+
 			for p in positions_list:
 				db.session.delete(p)
 			db.session.delete(old_position)
@@ -165,6 +197,7 @@ class TestSeduceApi(unittest.TestCase):
 			position = Position("room", 1, 0)
 			db.session.add(position)
 			db.session.commit()
+
 			# OK
 			ser.remove_bus("room", 1)
 			with self.assertRaises(PositionNotFoundException):
@@ -178,6 +211,7 @@ class TestSeduceApi(unittest.TestCase):
 			position = Position("room", 1, 0)
 			db.session.add(position)
 			db.session.commit()
+
 			# OK
 			ser.remove_room("room")
 			with self.assertRaises(PositionNotFoundException):
@@ -191,12 +225,15 @@ class TestSeduceApi(unittest.TestCase):
 			# Wrong position
 			with self.assertRaises(PositionNotFoundException):
 				ser.get_position_by_values("room", 1, 0)
+
 			position = Position("room", 1, 0)
 			db.session.add(position)
 			db.session.commit()
+
 			# OK
 			found_position = ser.get_position_by_values("room", 1, 0)
 			self.assertEqual(position, found_position)
+
 			db.session.delete(position)
 			db.session.commit()
 
@@ -211,11 +248,14 @@ class TestSeduceApi(unittest.TestCase):
 			# Invalid sensor
 			with self.assertRaises(SensorNotFoundException):
 				ser.create_event(dict(title="title", importance=5, sensor=0, ended=False))
+
 			sensor = Sensor("name", "mac", "type", "model", 0)
 			db.session.add(sensor)
 			db.session.commit()
+
 			# OK
 			event = ser.create_event(dict(title="title", importance=5, sensor=sensor.id, ended=False))
+
 			db.session.delete(event)
 			db.session.delete(sensor)
 			db.session.commit()
@@ -228,15 +268,18 @@ class TestSeduceApi(unittest.TestCase):
 			# Invalid id
 			with self.assertRaises(EventNotFoundException):
 				ser.get_event(0)
+
 			sensor = Sensor("name", "mac", "type", "model", 0)
 			db.session.add(sensor)
 			db.session.commit()
 			event = Event("title", 5, sensor.id)
 			db.session.add(event)
 			db.session.commit()
+
 			# OK
 			found_event = ser.get_event(event.id)
 			self.assertEqual(event, found_event)
+
 			db.session.delete(event)
 			db.session.delete(sensor)
 			db.session.commit()
@@ -266,14 +309,125 @@ class TestSeduceApi(unittest.TestCase):
 			event = Event("title", 5, sensor.id)
 			db.session.add(event)
 			db.session.commit()
+
 			# OK
 			found_event = ser.end_event(event.id)
 			self.assertEqual(event.id, found_event.id)
 			self.assertIsNotNone(found_event.end)
 			self.assertTrue(found_event.ended)
+
 			db.session.delete(event)
 			db.session.delete(sensor)
 			db.session.commit()
+
+
+	# Assignments
+
+	def test_add_assignment(self):
+		"""
+		Test case for add_assignment
+		"""
+		with self.app.app_context():
+			sensor = Sensor("name", "mac", "type", "model", 0)
+			db.session.add(sensor)
+			db.session.commit()
+			other_sensor = Sensor("other name", "other mac", "type", "model", 0)
+			db.session.add(other_sensor)
+			db.session.commit()
+			position = Position("room", 1, 0)
+			db.session.add(position)
+			db.session.commit()
+
+			# OK
+			same_sensor = ser.add_assignment("room", 1, 0, dict(sensor=sensor.id))
+			self.assertEqual(sensor, same_sensor)
+			found_position = ser.get_sensor_position(sensor.id)
+			self.assertEqual(position, found_position)
+			found_sensor = ser.get_assigned_sensor(position.room, position.bus, position.index)
+			self.assertEqual(sensor, found_sensor)
+
+			# Trying to assign a sensor but there is already one
+			with self.assertRaises(AssignmentNotValidException):
+				ser.add_assignment("room", 1, 0, dict(sensor=other_sensor.id))
+
+			db.session.delete(sensor)
+			db.session.delete(other_sensor)
+			db.session.delete(position)
+			db.session.commit()
+
+	def test_get_assigned_sensor(self):
+		"""
+		Test case for get_assigned_sensor
+		"""
+		with self.app.app_context():
+			sensor = Sensor("name", "mac", "type", "model", 0)
+			db.session.add(sensor)
+			db.session.commit()
+			position = Position("room", 1, 0)
+			db.session.add(position)
+			db.session.commit()
+
+			# No sensor assigned to position
+			with self.assertRaises(AssignmentNotFoundException):
+				ser.get_assigned_sensor(position.room, position.bus, position.index)
+
+			ser.add_assignment("room", 1, 0, dict(sensor=sensor.id))
+
+			# OK
+			found_sensor = ser.get_assigned_sensor(position.room, position.bus, position.index)
+			self.assertEqual(sensor, found_sensor)
+
+			db.session.delete(sensor)
+			db.session.delete(position)
+			db.session.commit()
+
+	def test_remove_assignment(self):
+		"""
+		Test case for remove_assignment
+		"""
+		with self.app.app_context():
+			sensor = Sensor("name", "mac", "type", "model", 0)
+			db.session.add(sensor)
+			db.session.commit()
+			position = Position("room", 1, 0)
+			db.session.add(position)
+			db.session.commit()
+			ser.add_assignment("room", 1, 0, dict(sensor=sensor.id))
+
+			# OK
+			ser.remove_assignment(position.room, position.bus, position.index)
+			with self.assertRaises(AssignmentNotFoundException):
+				ser.get_assigned_sensor(position.room, position.bus, position.index)
+			with self.assertRaises(AssignmentNotFoundException):
+				ser.get_sensor_position(sensor.id)
+
+			db.session.delete(sensor)
+			db.session.delete(position)
+			db.session.commit()
+
+
+	# History
+
+	def test_close_sensor_history_element(self):
+		"""
+		Test case for close_sensor_history_element
+		"""
+		with self.app.app_context():
+			pass # TODO
+
+	def test_(self):
+		"""
+		Test case for 
+		"""
+		with self.app.app_context():
+			pass # TODO
+
+	def test_(self):
+		"""
+		Test case for 
+		"""
+		with self.app.app_context():
+			pass # TODO
 
 
 if __name__ == '__main__':
