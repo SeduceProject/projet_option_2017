@@ -31,7 +31,7 @@ def get_sensor(id):
 def get_sensor_by_name(name):
 	query = Sensor.query.filter_by(name = name)
 	if query.count() == 1:
-		return query.one()
+		return query.all()
 	else:
 		raise SensorNotFoundException('There is no sensor with name ' + name + '.')
 
@@ -112,10 +112,13 @@ def create_event(data):
 	importance = data.get('importance')
 	sensor = data.get('sensor')
 	ended = data.get('ended')
-	event = Event(title, importance, sensor, ended)
-	db.session.add(event)
-	db.session.commit()
-	return event
+	if Sensor.query.filter(Sensor.id == sensor).count() == 1:
+		event = Event(title, importance, sensor, ended)
+		db.session.add(event)
+		db.session.commit()
+		return event
+	else:
+		raise SensorNotFoundException('There is no sensor with id ' + str(id) + '.')
 
 def get_event(id):
 	query = Event.query.filter(Event.id == id)
@@ -127,14 +130,14 @@ def get_event(id):
 def get_event_by_importance(name):
 	query = Event.query.filter(Event.importance == name)
 	if query.count() > 0:
-		return query.one()
+		return query.all()
 	else:
 		raise EventNotFoundException('There is no event with importance ' + str(name) + '.')
 
 def get_event_by_sensor_id(sensor):
 	query = Event.query.filter(Event.sensor == sensor)
 	if query.count() > 0:
-		return query.one()
+		return query.all()
 	else:
 		raise EventNotFoundException('There is no event for sensor ' + str(sensor) + '.')
 
@@ -146,6 +149,11 @@ def end_event(id):
 	db.session.commit()
 	return event
 
+def get_events():
+	return Event.query.all()
+
+def get_events_after_id(id):
+	return Event.query.filter(Event.id >= id).all()
 
 # Assignments
 
