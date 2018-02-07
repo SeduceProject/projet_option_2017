@@ -53,13 +53,10 @@ event = api.model("Full description of an event", {
 })
 
 submit_event = api.model('Information for an event creation', {
-	'id': fields.Integer(required=True, description='Event id'),
 	'title': fields.String(required=True, description='Title'),
 	'importance': fields.Integer(required=True, description='Importance from 0 to 10'),
 	'start': fields.DateTime(required=True, description='Start date'),
-	#'end': fields.DateTime(required=False, description='End Date'),
-	'sensor': fields.Integer(required=True, description='Sensor id'),
-	'ended' : fields.Boolean(required=False, description='End of the event', default = False)
+	'sensor': fields.Integer(required=True, description='Sensor id')
 })
 
 

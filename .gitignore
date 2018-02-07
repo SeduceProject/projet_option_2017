@@ -17,3 +17,4 @@ __pycache__/
 venv/
 rest_api_demo/
 python-client-generated/
+python-client/
