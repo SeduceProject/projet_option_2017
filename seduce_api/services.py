@@ -68,6 +68,9 @@ def delete_sensor(id):
 	db.session.delete(get_sensor(id))
 	db.session.commit()
 
+def get_sensors():
+	return Sensor.query.all()
+
 
 # Positions
 
