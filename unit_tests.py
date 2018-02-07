@@ -413,21 +413,84 @@ class TestSeduceApi(unittest.TestCase):
 		Test case for close_sensor_history_element
 		"""
 		with self.app.app_context():
-			pass # TODO
+			sensor = Sensor("name", "mac", "type", "model", 0)
+			db.session.add(sensor)
+			db.session.commit()
+			position = Position("room", 1, 0)
+			db.session.add(position)
+			db.session.commit()
+			ser.add_assignment("room", 1, 0, dict(sensor=sensor.id))
+			ser.remove_assignment("room", 1, 0)
 
-	def test_(self):
+			# OK
+			history = ser.get_sensor_history(sensor.id)["positions"][0]
+			self.assertEqual({"room": position.room, "bus": position.bus, "index": position.index}, history["position"])
+			self.assertIsNotNone(history["end_of_service"])
+
+			db.session.delete(sensor)
+			db.session.delete(position)
+			db.session.commit()
+
+	def test_get_sensor_history(self):
 		"""
-		Test case for 
+		Test case for get_sensor_history
 		"""
 		with self.app.app_context():
-			pass # TODO
+			sensor = Sensor("name", "mac", "type", "model", 0)
+			db.session.add(sensor)
+			db.session.commit()
+			position = Position("room", 1, 0)
+			db.session.add(position)
+			db.session.commit()
+			position2 = Position("room", 1, 1)
+			db.session.add(position2)
+			db.session.commit()
+			ser.add_assignment("room", 1, 0, dict(sensor=sensor.id))
+			ser.add_assignment("room", 1, 1, dict(sensor=sensor.id))
 
-	def test_(self):
+			# OK
+			history = sorted(ser.get_sensor_history(sensor.id)["positions"], key=lambda element: element["start_of_service"])
+			self.assertEqual(2, len(history))
+			self.assertEqual({"room": position.room, "bus": position.bus, "index": position.index}, history[0]["position"])
+			self.assertIsNotNone(history[0]["end_of_service"])
+			self.assertEqual({"room": position2.room, "bus": position2.bus, "index": position2.index}, history[1]["position"])
+			self.assertIsNone(history[1]["end_of_service"])
+
+			db.session.delete(sensor)
+			db.session.delete(position)
+			db.session.delete(position2)
+			db.session.commit()
+
+	def test_get_position_history(self):
 		"""
-		Test case for 
+		Test case for get_position_history
 		"""
 		with self.app.app_context():
-			pass # TODO
+			sensor = Sensor("name", "mac", "type", "model", 0)
+			db.session.add(sensor)
+			db.session.commit()
+			sensor2 = Sensor("name2", "mac2", "type", "model", 0)
+			db.session.add(sensor2)
+			db.session.commit()
+			position = Position("room", 1, 0)
+			db.session.add(position)
+			db.session.commit()
+			ser.add_assignment("room", 1, 0, dict(sensor=sensor.id))
+			ser.remove_assignment("room", 1, 0)
+			ser.add_assignment("room", 1, 0, dict(sensor=sensor2.id))
+
+			# OK
+			history = sorted(ser.get_position_history("room", 1, 0)["sensors"], key=lambda element: element["start_of_service"])
+			self.assertEqual(2, len(history))
+			self.assertEqual(sensor.id, history[0]["sensor"]["id"])
+			self.assertIsNotNone(history[0]["end_of_service"])
+			self.assertEqual(sensor2.id, history[1]["sensor"]["id"])
+			self.assertIsNone(history[1]["end_of_service"])
+
+			db.session.delete(sensor)
+			db.session.delete(sensor2)
+			db.session.delete(position)
+			db.session.commit()
 
 
 if __name__ == '__main__':
