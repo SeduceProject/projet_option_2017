@@ -19,7 +19,8 @@ class RoomManagement(Resource):
 		"""
 		Adds a bus to the room with the given id and size.
 		"""
-		return add_bus(room, request.json), 201
+		add_bus(room, request.json)
+		return None, 201
 
 	def delete(self, room):
 		"""
