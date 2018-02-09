@@ -38,7 +38,3 @@ class DBBot:
 		url = URL_API + "/sensors/" + id + "/position"
 		js = get_json_from_url(url)
 		return js	
-	
-		
-#test = DBBot()
-#print(test.get_sensor("Claude"))

@@ -58,17 +58,14 @@ def answer_all_updates(updates):
 			print(e)
 			
 def send_all_events(events):
-	print "dans le send all events"
 	for event in events:
-		print event["ended"], type(event["ended"])
 		if (event["ended"] == False):
 			try:
 				start = event["start"]
 				importance = event["importance"]
 				title = event["title"]
 				id_sensor = event["sensor"]
-				text = "At the moment " + str(start) + ", the sensor with the id " + str(id_sensor) + "reported an event of importance " + str(importance) + " and of title '" + title + "'."
-				print "event du sensor " + str(id_sensor)
+				text = "At the moment " + str(start) + ", the sensor with the id " + str(id_sensor) + " reported an event of importance " + str(importance) + " with title '" + title + "'."
 				send_alert(text)
 			except Exception as e:
 				print(e)
@@ -96,7 +93,6 @@ def send_message(text):
 	get_url(url)	
 	
 def send_alert(text):
-	print "dans le send alert"
 	params = {"text": text, "chat_id": CHAT}
 	url = URL_BOT + "sendMessage?" + urllib.urlencode(params)
 	get_url(url)
@@ -111,7 +107,6 @@ def main():
 			answer_all_updates(updates)
 		events = get_events(last_event_id)
 		if len(events) > 0:
-			print "dans le if events"
 			last_event_id = get_last_event_id(events) + 1
 			send_all_events(events)
 		time.sleep(0.5)
