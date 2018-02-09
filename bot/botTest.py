@@ -78,7 +78,7 @@ def send_all_events(events):
 def send_message(text):
 	if (text[:19]=="/sensors/id/byName/"):
 		name_s = text[19:]
-		res = str(DB.get_sensor(name_s))
+		res = str(DB.get_sensor_by_name(name_s))
 		params = {"text": res, "chat_id": CHAT}
 	else:
 		params = {"text": text, "chat_id": CHAT}
