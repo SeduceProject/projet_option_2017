@@ -19,18 +19,22 @@ class DBBot:
 		self.dbname = dbname
 		self.conn = sqlite3.connect(dbname)
 
-	def get_sensor(self, name):
-		"""req = "SELECT id FROM sensors WHERE name=(?)"
-		args = (name, )
-		return [x[0] for x in self.conn.execute(req, args)][0]"""
-		#//////////////via api et json//////////////
-		print "get_sensor de dbbot"
-		print name
+	def get_sensor_by_name(self, name):
 		url = URL_API + "/sensors/byName/" + name
 		js = get_json_from_url(url)
-		print js
-		return js["id"]
+		return js
 		
+	def get_sensor_by_id(self, id):
+		url = URL_API + "/sensors/" + id
+		js = get_json_from_url(url)
+		return js
 		
-#test = DBBot()
-#print(test.get_sensor("Claude"))
+	def get_sensor_history(self, id):
+		url = URL_API + "/sensors/" + id + "/history"
+		js = get_json_from_url(url)
+		return js
+		
+	def get_sensor_position(self, id):
+		url = URL_API + "/sensors/" + id + "/position"
+		js = get_json_from_url(url)
+		return js	

@@ -30,13 +30,8 @@ def get_updates(offset=None):
 	js = get_json_from_url(url)
 	return js
 	
-def get_events(offset=None):
-	"""if offset:
-		#ici on met l'url de la fonction de l'api qui renvoie tous les evenements a partir de offset 
-		#url = dbBot.URL_API + "/events/get_all/" + str(offset)
-	else:
-		#ici on met l'url de la fonction de l'api qui renvoie tous les evenements
-		#url = dbBot.URL_API + "/events/get_all" """
+def get_events(offset):
+	url = dbBot.URL_API + "/event/after/" + str(offset)
 	js = get_json_from_url(url)
 	return js
 	
@@ -48,7 +43,7 @@ def get_last_update_id(updates):
 
 def get_last_event_id(events):
 	event_ids = []
-	for event in events["quelqueChoseVoirDansLeFormatDuJson"]:
+	for event in events:
 		event_ids.append(int(event["id"]))
 	return max(event_ids)
 	
@@ -63,22 +58,34 @@ def answer_all_updates(updates):
 			print(e)
 			
 def send_all_events(events):
-	for event in events["quelqueChoseVoirDansLeFormatDuJson"]:
-		if (event["ended"] == false):
+	for event in events:
+		if (event["ended"] == False):
 			try:
 				start = event["start"]
 				importance = event["importance"]
 				title = event["title"]
-				id_sensor = event["id_sensor"]
-				text = "At the moment " + str(start) + ", the sensor with the id " + str(id_sensor) + "reported an event of importance " + str(importance) + " and of title '" + title + "'."
+				id_sensor = event["sensor"]
+				text = "At the moment " + str(start) + ", the sensor with the id " + str(id_sensor) + " reported an event of importance " + str(importance) + " with title '" + title + "'."
 				send_alert(text)
 			except Exception as e:
 				print(e)
 
 def send_message(text):
-	if (text[:19]=="/sensors/id/byName/"):
-		name_s = text[19:]
-		res = str(DB.get_sensor(name_s))
+	if (text[:16]=="/sensors/byName/"):
+		name_s = text[16:]
+		res = str(DB.get_sensor_by_name(name_s))
+		params = {"text": res, "chat_id": CHAT}
+	elif (text[:14]=="/sensors/byId/"):
+		id_s = text[14:]
+		res = str(DB.get_sensor_by_id(id_s))
+		params = {"text": res, "chat_id": CHAT}
+	elif (text[:17]=="/sensors/history/"):
+		id_s = text[17:]
+		res = str(DB.get_sensor_history(id_s))
+		params = {"text": res, "chat_id": CHAT}
+	elif (text[:18]=="/sensors/position/"):
+		id_s = text[18:]
+		res = str(DB.get_sensor_position(id_s))
 		params = {"text": res, "chat_id": CHAT}
 	else:
 		params = {"text": text, "chat_id": CHAT}
@@ -92,16 +99,16 @@ def send_alert(text):
 
 def main():
 	last_update_id = None
-	#last_event_id = None
+	last_event_id = 0
 	while True:
 		updates = get_updates(last_update_id)
 		if len(updates["result"]) > 0:
 			last_update_id = get_last_update_id(updates) + 1
 			answer_all_updates(updates)
-		"""events = get_events(last_event_id)
-		if len(events["quelqueChoseVoirDansLeFormatDuJson"]) > 0:
+		events = get_events(last_event_id)
+		if len(events) > 0:
 			last_event_id = get_last_event_id(events) + 1
-			answer_all_events(events)"""
+			send_all_events(events)
 		time.sleep(0.5)
 
 
