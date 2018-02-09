@@ -1,11 +1,13 @@
 import logging.config
 
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, render_template
+from flask_bootstrap import Bootstrap
 import settings
 from seduce_api.endpoints.sensors import ns as sensors_namespace
 from seduce_api.endpoints.positions import ns as positions_namespace
 from seduce_api.endpoints.event import ns as event_namespace
 from seduce_api.restplus import api
+from seduce_api import services
 from database import db
 
 app = Flask(__name__)
@@ -36,12 +38,18 @@ def init_db(flask_app):
 	db.init_app(flask_app)
 	db.create_all()
 
+@app.route('/seduce/event/all')
+def table(): 
+	events = services.get_events()
+	return render_template('table.html', events=events)
+
 def main():
 	with app.app_context():
 		configure_app(app)
 		initialize_app(app)
 		init_db(app)
 	log.info('>>>>> Starting development server at http://{}/'+base_url+'/ <<<<<'.format(app.config['SERVER_NAME']))
+	Bootstrap(app)
 	app.run(debug=settings.FLASK_DEBUG)
 
 

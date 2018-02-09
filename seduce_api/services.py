@@ -29,17 +29,18 @@ def get_sensor(id):
 		raise SensorNotFoundException('There is no sensor with id ' + str(id) + '.')
 
 def get_sensor_by_name(name):
-	query = Sensor.query.filter_by(name = name)
+	query = Sensor.query.filter(Sensor.name == name)
 	if query.count() == 1:
 		return query.one()
 	else:
 		raise SensorNotFoundException('There is no sensor with name ' + name + '.')
 
-def get_sensor_position(id, data):
-	optional_assignment = get_assignments_aux(data.get('room'), data.get('bus'), data.get('index'))
-	if optional_assignment.count() == 0:
-		raise AssignmentNotFoundException('The sensor ' + str(id) + ' is not assigned currently.') # TODO error or message ?
-	return Position.query.filter(Position.id == optional_assignment.one().id_position).one()
+def get_sensor_position(id):
+	assignments = Assignment.query.filter(Assignment.id_sensor == id)
+	if assignments.count() > 0:
+		return Position.query.filter(Position.id == assignments.one().id_position).one()
+	else:
+		raise AssignmentNotFoundException('The sensor ' + str(id) + ' is not assigned currently.')
 
 def update_sensor(id, data):
 	sensor = get_sensor(id)
@@ -67,6 +68,9 @@ def delete_sensor(id):
 	db.session.delete(get_sensor(id))
 	db.session.commit()
 
+def get_sensors():
+	return Sensor.query.all()
+
 
 # Positions
 
@@ -81,9 +85,13 @@ def add_bus(room, data):
 	if size < 1:
 		raise PositionNotValidException(str(size) + ' is not a valid bus size.')
 
+	result = []
 	for i in xrange(size):
-		db.session.add(Position(room, bus_index, i))
+		p = Position(room, bus_index, i)
+		db.session.add(p)
+		result.append(p)
 	db.session.commit()
+	return result
 
 def remove_bus(room, bus):
 	positions = Position.query.filter(and_(Position.room == room, Position.bus == bus))
@@ -97,6 +105,7 @@ def remove_room(room):
 		db.session.delete(p)
 	db.session.commit()
 
+	# Auxiliary method
 def get_position_by_values(room, bus, index):
 	query = Position.query.filter(and_(Position.room == room, Position.bus == bus, Position.index == index))
 	if query.count() > 0:
@@ -111,11 +120,18 @@ def create_event(data):
 	title = data.get('title')
 	importance = data.get('importance')
 	sensor = data.get('sensor')
+	try:
+		get_sensor(sensor)
+	except:
+		raise SensorNotFoundException('No event can be associated with a sensor with id ' + str(id) + ' because it does not exist.')
 	ended = data.get('ended')
-	event = Event(title, importance, sensor, ended)
-	db.session.add(event)
-	db.session.commit()
-	return event
+	if Sensor.query.filter(Sensor.id == sensor).count() == 1:
+		event = Event(title, importance, sensor, ended)
+		db.session.add(event)
+		db.session.commit()
+		return event
+	else:
+		raise SensorNotFoundException('There is no sensor with id ' + str(id) + '.')
 
 def get_event(id):
 	query = Event.query.filter(Event.id == id)
@@ -124,27 +140,32 @@ def get_event(id):
 	else:
 		raise EventNotFoundException('There is no event with id ' + str(id) + '.')
 
-def get_event_by_importance(name):
-	query = Event.query.filter(Event.importance == name)
+def get_event_by_importance(importance):
+	query = Event.query.filter(Event.importance == importance)
 	if query.count() > 0:
-		return query.one()
+		return query.all()
 	else:
-		raise EventNotFoundException('There is no event with importance ' + str(name) + '.')
+		raise EventNotFoundException('There is no event with importance ' + str(importance) + '.')
 
 def get_event_by_sensor_id(sensor):
 	query = Event.query.filter(Event.sensor == sensor)
 	if query.count() > 0:
-		return query.one()
+		return query.all()
 	else:
 		raise EventNotFoundException('There is no event for sensor ' + str(sensor) + '.')
 
 def end_event(id):
 	event = get_event(id)
 	event.close_history()
-	event.ended = True
 	db.session.add(event)
 	db.session.commit()
 	return event
+
+def get_events():
+	return Event.query.all()
+
+def get_events_after_id(id):
+	return Event.query.filter(Event.id >= id).all()
 
 
 # Assignments
@@ -165,6 +186,7 @@ def add_assignment(room, bus, index, data):
 	db.session.commit()
 	return sensor
 
+	# Auxiliary method
 def get_assignments_aux(room, bus, index):
 	return Assignment.query.filter(Assignment.id_position == get_position_by_values(room, bus, index).id)
 
@@ -176,8 +198,12 @@ def get_assigned_sensor(room, bus, index):
 		raise AssignmentNotFoundException('There is no sensor at position [' + room + ', ' + str(bus) + ', ' + str(index) + '].')
 
 def remove_assignment(room, bus, index):
-	delete_assignment(get_assignments_aux(room, bus, index).one())
+	assignments = get_assignments_aux(room, bus, index)
+	if assignments.count() > 0:
+		delete_assignment(assignments.one())
+	# No need for an error if there wasn't a sensor assigned to this position
 
+	# Auxiliary method
 def delete_assignment(assignment):
 	close_sensor_history_element(assignment.id_sensor)
 	db.session.delete(assignment)
@@ -186,6 +212,7 @@ def delete_assignment(assignment):
 
 # History
 
+	# Auxiliary method
 def close_sensor_history_element(sensor_id):
 	history = History.query.filter(and_(History.end_of_service.is_(None), History.id_sensor == sensor_id)).one()
 	history.close_history()
@@ -197,6 +224,7 @@ def get_sensor_history(sensor_id):
 def get_position_history(room, bus, index):
 	return marshalling_aux_position(History.query.filter(History.id_position == get_position_by_values(room, bus, index).id))
 
+	# Auxiliary method
 def marshalling_aux_sensor(full_history):
 	result = []
 	for history in full_history:
@@ -204,6 +232,7 @@ def marshalling_aux_sensor(full_history):
 		result.append({"start_of_service": history.start_of_service, "end_of_service": history.end_of_service, "position": api.marshal(position, ser_position)})
 	return {"positions": result}
 
+	# Auxiliary method
 def marshalling_aux_position(full_history):
 	result = []
 	for history in full_history:
