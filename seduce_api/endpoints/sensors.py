@@ -64,7 +64,7 @@ class SensorIdentity(Resource):
 class PositionSensorById(Resource):
 
 	@api.marshal_with(position)
-	def get_position_sensor(self, id):
+	def get(self, id):
 		"""
 		Retrieves the position of a sensor with the given id.
 		"""
