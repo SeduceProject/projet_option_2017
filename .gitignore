@@ -18,3 +18,9 @@ venv/
 rest_api_demo/
 python-client-generated/
 python-client/
+
+# Database files
+*.sqlite
+
+# Emacs files
+*~
